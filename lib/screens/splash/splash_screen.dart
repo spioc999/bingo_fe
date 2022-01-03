@@ -41,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ImageHelper.getPng(
-                    'logo_free',
+                    'logo',
                     height: MediaQuery.of(context).size.height / 2.75,
                     fit: BoxFit.fitHeight
                 ),

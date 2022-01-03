@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 
 class HomeNotifier extends BaseNotifier {
   String nickname = '';
-  String room = '';
+  String roomCode = '';
+  String roomName = '';
 
   TextEditingController nicknameController = TextEditingController();
-  TextEditingController roomController = TextEditingController();
+  TextEditingController roomCodeController = TextEditingController();
+  TextEditingController roomNameController = TextEditingController();
 
   HomeNotifier();
 
@@ -17,11 +19,16 @@ class HomeNotifier extends BaseNotifier {
     notifyListeners();
   }
 
-  onRoomChanged(String value) {
-    room = value;
+  onRoomCodeChanged(String value) {
+    roomCode = value;
     notifyListeners();
   }
 
-  bool get canContinue => nickname.isNotEmpty;
-  bool get canConnectToRoom => room.isNotEmpty && room.length == 5;
+  onRoomNameChanged(String value) {
+    roomName = value;
+    notifyListeners();
+  }
+
+  bool get canConnectToRoom => nickname.isNotEmpty && roomCode.isNotEmpty && roomCode.length == 5;
+  bool get canStartNewRoom => nickname.isNotEmpty && roomName.isNotEmpty;
 }

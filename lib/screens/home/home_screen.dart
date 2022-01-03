@@ -18,7 +18,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final FocusNode _nicknameNode = FocusNode();
-  final FocusNode _roomNode = FocusNode();
+  final FocusNode _roomCodeNode = FocusNode();
+  final FocusNode _roomNameNode = FocusNode();
 
   @override
   void initState() {
@@ -31,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseWidget(
-      safeAreaTop: true,
       overlayStyle: SystemUiOverlayStyle.dark,
       child: _buildChild(),
     );
@@ -42,9 +42,28 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (_, notifier, __) => Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            const SizedBox(height: 20,),
-            const BoldText('Bingo FE', fontSize: 26, color: Colors.red,),
-            const SizedBox(height: 50,),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.red,
+                    Colors.red.withOpacity(0.8)
+                  ]
+                ),
+                borderRadius: const BorderRadius.only(
+                    bottomRight: Radius.circular(25.0)),
+              ),
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 10 + MediaQuery.of(context).viewPadding.top,),
+                  const BoldText('BINGO FE', fontSize: 26),
+                  const SizedBox(height: 20,),
+                ],
+              ),
+            ),
+            const SizedBox(height: 40,),
             ScrollingExpandedWidget(
               child: _buildForm(notifier)
             )
@@ -59,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const RomanText('Insert a nickname to identify you!'),
+          const RomanText('Insert a nickname to identify you!', color: Colors.black87),
           const SizedBox(height: 10,),
           AppFormFieldWidget(
             controller: notifier.nicknameController,
@@ -71,18 +90,19 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 5,),
           const RomanText('This field is mandatory.', fontSize: 12, color: Colors.grey,),
           const SizedBox(height: 50,),
-          const RomanText('Insert the room\'s code'),
+          const RomanText('Insert the 5 letters room\'s code', color: Colors.black87,),
           const SizedBox(height: 10,),
           AppFormFieldWidget(
-            controller: notifier.roomController,
-            focusNode: _roomNode,
-            prefixIcon: Icons.play_circle_outline,
-            hintText: 'Room',
+            controller: notifier.roomCodeController,
+            focusNode: _roomCodeNode,
+            prefixIcon: Icons.supervised_user_circle_outlined,
+            textCapitalization: TextCapitalization.characters,
+            hintText: 'Room code',
             maxLength: 5,
-            onChanged: (value) => notifier.onRoomChanged(value),
+            onChanged: (value) => notifier.onRoomCodeChanged(value),
           ),
           const SizedBox(height: 10,),
-          AppButton(text: 'Connect', enabled: notifier.canContinue && notifier.canConnectToRoom,),
+          AppButton(text: 'Connect', enabled: notifier.canConnectToRoom,),
           const SizedBox(height: 30,),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -104,9 +124,19 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 30,),
-          AppButton(text: 'Start new room', enabled: notifier.canContinue,),
+          const RomanText('Insert a name associated to room', color: Colors.black87,),
           const SizedBox(height: 10,),
-          const RomanText('You will be the host of the room', color: Colors.grey,),
+          AppFormFieldWidget(
+            controller: notifier.roomNameController,
+            focusNode: _roomNameNode,
+            prefixIcon: Icons.drive_file_rename_outline,
+            hintText: 'Room name',
+            onChanged: (value) => notifier.onRoomNameChanged(value),
+          ),
+          const SizedBox(height: 10,),
+          AppButton(text: 'Start new room', enabled: notifier.canStartNewRoom,),
+          const SizedBox(height: 10,),
+          const RomanText('You will be the host of the room', fontSize: 12, color: Colors.grey,),
         ],
       ),
     );

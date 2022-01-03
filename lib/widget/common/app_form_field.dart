@@ -17,10 +17,11 @@ class AppFormFieldWidget extends StatelessWidget {
   final bool isExtendedField;
   final String? errorText;
   final int? maxLength;
+  final TextCapitalization? textCapitalization;
 
   const AppFormFieldWidget({this.hintText, this.prefixIcon, this.obscureText = false,
     this.suffixIcon, this.onChanged, this.focusNode, this.controller,
-    this.inputType, this.onSubmitted, this.textInputAction, this.validator,
+    this.inputType, this.onSubmitted, this.textInputAction, this.validator, this.textCapitalization,
     this.enabled = true, this.isExtendedField = false, this.errorText, this.maxLength, Key? key}) : super(key: key);
 
   @override
@@ -29,6 +30,7 @@ class AppFormFieldWidget extends StatelessWidget {
       enableSuggestions: false,
       textAlignVertical: TextAlignVertical.center,
       enabled: enabled,
+      textCapitalization: textCapitalization ?? TextCapitalization.none,
       minLines: isExtendedField ? 2 : 1,
       keyboardType: inputType ?? TextInputType.text,
       textInputAction: textInputAction ?? TextInputAction.done,
