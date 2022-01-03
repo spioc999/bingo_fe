@@ -33,22 +33,27 @@ mixin RouteMixin {
     );
   }
 
-  navigateToLoginForUnauthorized() {
-    navigateTo(RouteEnum.home, shouldClearAll: true, arguments: true); //TODO check arguments
-  }
-
   void pop([dynamic result]) {
     return navigatorState.pop(result);
   }
 
   Future<T?> navigateToBottomSheet<T>(Widget widget, {bool isDismissible = true}) async{
+    Widget child;
+    if(isDismissible){
+      child = widget;
+    }else{
+      child = WillPopScope(
+        child: widget,
+        onWillPop: () => Future.value(false)
+      );
+    }
     return await showModalBottomSheet<T>(
         enableDrag: isDismissible,
         isDismissible: isDismissible,
         backgroundColor: Colors.transparent,
         useRootNavigator: true,
         context: navigatorState.context,
-        builder: (context) => widget);
+        builder: (context) => child);
   }
 
   bool isCurrent(RouteEnum routeEnum) {
