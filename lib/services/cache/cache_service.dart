@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:bingo_fe/services/models/create_room_response.dart';
 import 'package:bingo_fe/services/service_response.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -11,44 +14,67 @@ class CacheService{
 
   CacheService({required this.client});
 
-  Future<ServiceResponse> saveLastRoomName(String? roomName) async {
+  Future<ServiceResponse> saveIsHost(bool? isHost) async {
     ServiceResponse response = ServiceResponse();
     try{
       await client.write(
-          key: StorageKeys.lastRoomName,
-          value: roomName);
+          key: StorageKeys.isHost,
+          value: (isHost ?? false).toString());
     } catch (_) {
       response.error = _genericError;
     }
     return response;
   }
 
-  Future<ServiceResponse<String>> getLastRoomName() async {
-    ServiceResponse<String> response = ServiceResponse();
-    String? data = await client.read(key: StorageKeys.lastRoomName);
+  Future<ServiceResponse<bool>> isHost() async {
+    ServiceResponse<bool> response = ServiceResponse();
+    String? data = await client.read(key: StorageKeys.isHost);
+    response.result = data == 'true' ? true : false;
+    return response;
+  }
+
+  Future<ServiceResponse> saveRoomCreatedAndPaper(CreateRoomResponse? roomCreatedAndPaper) async {
+    ServiceResponse response = ServiceResponse();
+    try{
+      await client.write(
+          key: StorageKeys.roomCreatedAndPaper,
+          value: roomCreatedAndPaper == null ? null : jsonEncode(roomCreatedAndPaper.toJson()));
+    } catch (_) {
+      response.error = _genericError;
+    }
+    return response;
+  }
+
+  Future<ServiceResponse<CreateRoomResponse>> getRoomCreatedAndPaper() async {
+    ServiceResponse<CreateRoomResponse> response = ServiceResponse();
+    String? data = await client.read(key: StorageKeys.roomCreatedAndPaper);
     if(data == null){
       response.error = _notFoundError;
       return response;
     }
-    response.result = data;
-    return response;
-  }
-
-  Future<ServiceResponse> saveLastRoomWebSocket(String? webSocket) async {
-    ServiceResponse response = ServiceResponse();
     try{
-      await client.write(
-          key: StorageKeys.lastRoomWebSocket,
-          value: webSocket);
+      response.result = CreateRoomResponse.fromJson(jsonDecode(data));
     } catch (_) {
       response.error = _genericError;
     }
     return response;
   }
 
-  Future<ServiceResponse<String>> getLastRoomWebSocket() async {
+  Future<ServiceResponse> saveNickname(String? nickname) async {
+    ServiceResponse response = ServiceResponse();
+    try{
+      await client.write(
+          key: StorageKeys.nickname,
+          value: nickname);
+    } catch (_) {
+      response.error = _genericError;
+    }
+    return response;
+  }
+
+  Future<ServiceResponse<String>> getNickname() async {
     ServiceResponse<String> response = ServiceResponse();
-    String? data = await client.read(key: StorageKeys.lastRoomWebSocket);
+    String? data = await client.read(key: StorageKeys.nickname);
     if(data == null){
       response.error = _notFoundError;
       return response;
@@ -65,6 +91,7 @@ class CacheService{
 }
 
 class StorageKeys{
-  static const lastRoomName = 'LAST_ROOM_NAME';
-  static const lastRoomWebSocket = 'LAST_ROOM_WEB_SOCKET';
+  static const isHost = 'IS_HOST';
+  static const roomCreatedAndPaper = 'ROOM_CREATED_AND_PAPER';
+  static const nickname = 'NICKNAME';
 }

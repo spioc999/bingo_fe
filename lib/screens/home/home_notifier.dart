@@ -1,9 +1,10 @@
 import 'package:bingo_fe/base/base_notifier.dart';
+import 'package:bingo_fe/mixins/mixin_service.dart';
 import 'package:bingo_fe/navigation/mixin_route.dart';
 import 'package:bingo_fe/navigation/routes.dart';
 import 'package:flutter/material.dart';
 
-class HomeNotifier extends BaseNotifier with RouteMixin{
+class HomeNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
   String nickname = '';
   String roomCode = '';
   String roomName = '';
@@ -42,10 +43,19 @@ class HomeNotifier extends BaseNotifier with RouteMixin{
   onTapStartNewRoom() async{
     _hasTappedStart = true;
     showLoading();
-    await Future.delayed(Duration(seconds: 2), (){});
+    final response = await createNewRoom(roomName, nickname, isSilent: true);
+    if(response.hasError){
+      _hasTappedStart = false;
+      hideLoading();
+      showMessage(response.error!.errorMessage, isError: true);
+      return;
+    }
+    await saveIsHost(true);
+    await saveRoomCreatedAndPaper(response.result);
+    await saveNickname(nickname);
+    _hasTappedStart = false;
     hideLoading();
     navigateTo(RouteEnum.game, shouldReplace: true);
-    _hasTappedStart = false;
   }
 
   bool get canConnectToRoom => nickname.isNotEmpty && roomCode.isNotEmpty && roomCode.length == 5;

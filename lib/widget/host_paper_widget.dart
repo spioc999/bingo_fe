@@ -4,112 +4,9 @@ import 'package:flutter/material.dart';
 
 class HostPaperWidget extends StatelessWidget {
 
-  List<CardModel> hostCards = [
-    CardModel([
-      ColumnCard([
-        {1: true}, {11: false}, {21: true}
-      ]),
-      ColumnCard([
-        {2: false}, {12: false}, {22: false}
-      ]),
-      ColumnCard([
-        {3: false}, {13: true}, {23: false}
-      ]),
-      ColumnCard([
-        {4: false}, {14: true}, {24: false}
-      ]),
-      ColumnCard([
-        {5: false}, {15: true}, {25: false}
-      ])
-    ]),
-    CardModel([
-      ColumnCard([
-        {1: true}, {11: false}, {21: true}
-      ]),
-      ColumnCard([
-        {2: false}, {12: false}, {22: false}
-      ]),
-      ColumnCard([
-        {3: false}, {13: true}, {23: false}
-      ]),
-      ColumnCard([
-        {4: false}, {14: true}, {24: false}
-      ]),
-      ColumnCard([
-        {5: false}, {15: true}, {25: false}
-      ])
-    ]),
-    CardModel([
-      ColumnCard([
-        {1: true}, {11: false}, {21: true}
-      ]),
-      ColumnCard([
-        {2: false}, {12: false}, {22: false}
-      ]),
-      ColumnCard([
-        {3: false}, {13: true}, {23: false}
-      ]),
-      ColumnCard([
-        {4: false}, {14: true}, {24: false}
-      ]),
-      ColumnCard([
-        {5: false}, {15: true}, {25: false}
-      ])
-    ]),
-    CardModel([
-      ColumnCard([
-        {1: true}, {11: false}, {21: true}
-      ]),
-      ColumnCard([
-        {2: false}, {12: false}, {22: false}
-      ]),
-      ColumnCard([
-        {3: false}, {13: true}, {23: false}
-      ]),
-      ColumnCard([
-        {4: false}, {14: true}, {24: false}
-      ]),
-      ColumnCard([
-        {5: false}, {15: true}, {25: false}
-      ])
-    ]),
-    CardModel([
-      ColumnCard([
-        {1: true}, {11: false}, {21: true}
-      ]),
-      ColumnCard([
-        {2: false}, {12: false}, {22: false}
-      ]),
-      ColumnCard([
-        {3: false}, {13: true}, {23: false}
-      ]),
-      ColumnCard([
-        {4: false}, {14: true}, {24: false}
-      ]),
-      ColumnCard([
-        {5: false}, {15: true}, {25: false}
-      ])
-    ]),
-    CardModel([
-      ColumnCard([
-        {1: true}, {11: false}, {21: true}
-      ]),
-      ColumnCard([
-        {2: false}, {12: false}, {22: false}
-      ]),
-      ColumnCard([
-        {3: false}, {13: true}, {23: false}
-      ]),
-      ColumnCard([
-        {4: false}, {14: true}, {24: false}
-      ]),
-      ColumnCard([
-        {5: false}, {15: true}, {25: false}
-      ])
-    ])
-  ];
+  final List<CardModel> hostCards;
 
-  HostPaperWidget({Key? key}) : super(key: key);
+  const HostPaperWidget({required this.hostCards, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -155,31 +52,30 @@ class HostPaperWidget extends StatelessWidget {
     );
   }
 
-  _buildHostCard(List<ColumnCard> columns){
-    //TODO
+  _buildHostCard(List<ColumnCard>? columns){
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(
-        columns.length,
+        columns?.length ?? 0,
         (cIndex) {
-          final column = columns[cIndex];
+          final column = columns![cIndex];
           return Column(
             children: List.generate(
               column.numbers.length,
               (index) {
                 final mapNumber = column.numbers[index];
-                final number = mapNumber.keys.toList()[0];
+                final number = int.tryParse(mapNumber.keys.toList()[0]);
                 final extracted = mapNumber.values.toList()[0];
                 return Padding(
                   padding: EdgeInsets.symmetric(
                       vertical: 2,
-                      horizontal: number < 10 ? 6 : 2
+                      horizontal: (number ?? 0) < 10 ? 6 : 2
                   ),
                   child: Container(
                     padding: EdgeInsets.symmetric(
                         vertical: 3.5,
-                        horizontal: number < 10 ? 5 : 3.5
+                        horizontal: (number ?? 0) < 10 ? 5 : 3.5
                     ),
                     decoration: BoxDecoration(
                       color: extracted ? Colors.red : Colors.white,
@@ -197,139 +93,6 @@ class HostPaperWidget extends StatelessWidget {
           );
         }
       ),
-    );
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          children: List.generate(3,
-            (j) {
-                //TODO
-                final number = 10*j;
-                final isExtracted = j % 2 == 0;
-                return Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 2,
-                      horizontal: number < 10 ? 6 : 2
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(3.5),
-                    decoration: BoxDecoration(
-                      color: isExtracted ? Colors.red : Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: RomanText(
-                      number.toString(),
-                      fontSize: 18,
-                    ),
-                  ),
-                );
-              }
-          )
-        ),
-        Column(
-            children: List.generate(3,
-                    (j) {
-                  //TODO
-                  final number = 10*j;
-                  final isExtracted = j % 2 == 0;
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 2,
-                        horizontal: number < 10 ? 6 : 2
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(3.5),
-                      decoration: BoxDecoration(
-                        color: isExtracted ? Colors.red : Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: RomanText(
-                        number.toString(),
-                        fontSize: 18,
-                      ),
-                    ),
-                  );
-                }
-            )
-        ),
-        Column(
-            children: List.generate(3,
-                    (j) {
-                  //TODO
-                  final number = 10*j;
-                  final isExtracted = j % 2 == 0;
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 2,
-                        horizontal: number < 10 ? 6 : 2
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(3.5),
-                      decoration: BoxDecoration(
-                        color: isExtracted ? Colors.red : Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: RomanText(
-                        number.toString(),
-                        fontSize: 18,
-                      ),
-                    ),
-                  );
-                }
-            )
-        ),
-        Column(
-            children: List.generate(3,
-                    (j) {
-                  //TODO
-                  final number = 10*j;
-                  final isExtracted = j % 2 == 0;
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 2,
-                        horizontal: number < 10 ? 6 : 2
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(3.5),
-                      decoration: BoxDecoration(
-                        color: isExtracted ? Colors.red : Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: RomanText(
-                        number.toString(),
-                        fontSize: 18,
-                      ),
-                    ),
-                  );
-                }
-            )
-        ),
-        Column(
-            children: List.generate(3,
-                    (j) {
-                  //TODO
-                  final number = 10*j;
-                  final isExtracted = j % 2 == 0;
-                  return Padding(
-                    padding: EdgeInsets.all(1.5),
-                    child: Container(
-                      padding: const EdgeInsets.all(3.5),
-                      decoration: BoxDecoration(
-                        color: isExtracted ? Colors.red : Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: RomanText(
-                        number.toString(),
-                        fontSize: 18,
-                      ),
-                    ),
-                  );
-                }
-            )
-        )
-      ],
     );
   }
 }

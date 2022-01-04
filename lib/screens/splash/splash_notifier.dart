@@ -15,14 +15,8 @@ class SplashNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
 
     bool goToHome = true;
 
-    // Check if there is any pending match in cache
-    final lastRoomName = await getLastRoomName(isSilent: true);
-    final lastWebSocket = await getLastRoomWebSocket(isSilent: true);
-
-
-    if (!lastRoomName.hasError && !lastWebSocket.hasError
-        && lastRoomName.result.isNotNullAndNotEmpty
-        && lastWebSocket.result.isNotNullAndNotEmpty) {
+    //TODO add check for previous game
+    if (false) {
 
       hideLoading();
       final continueLastRoom = await navigateToBottomSheet(
@@ -36,8 +30,6 @@ class SplashNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
     hideLoading();
 
     if(goToHome){
-      await saveLastRoomName(null);
-      await saveLastRoomWebSocket(null);
       navigateTo(RouteEnum.home, shouldReplace: true);
     }else{
       //TODO

@@ -128,7 +128,7 @@ class _GameScreenState extends State<GameScreen> {
         const SizedBox(height: 40,),
         const BoldText('BANK PAPER', fontSize: 16,),
         const SizedBox(height: 10,),
-        HostPaperWidget()
+        HostPaperWidget(hostCards: notifier.cards,)
       ],
     );
   }
@@ -153,7 +153,7 @@ class _GameScreenState extends State<GameScreen> {
         const SizedBox(height: 40,),
         const BoldText('Player\'s cards', fontSize: 16,),
         const SizedBox(height: 10,),
-        CardWidget()
+        //TODO CardWidget()
       ],
     );
   }
