@@ -7,13 +7,16 @@ class AppButton extends StatelessWidget {
   final Function? onTap;
   final bool enabled;
   final IconData? icon;
+  final bool isLoading;
 
-  const AppButton({this.text = '', this.onTap, this.enabled = true, this.icon, Key? key}) : super(key: key);
+  const AppButton({this.text = '', this.onTap, this.enabled = true, this.isLoading = false, this.icon, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Widget child;
-    if(icon != null) {
+    if (isLoading){
+      child = const SizedBox(width: 26, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 3.5,));
+    }else if(icon != null) {
       child = Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -35,7 +38,7 @@ class AppButton extends StatelessWidget {
       child: InkWell(
         splashColor: Colors.black,
         borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-        onTap: enabled && onTap != null ? () => onTap!() : null,
+        onTap: enabled && onTap != null && !isLoading ? () => onTap!() : null,
         child: Container(
           alignment: Alignment.center,
           height: 42,
@@ -45,7 +48,7 @@ class AppButton extends StatelessWidget {
             borderRadius: const BorderRadius.all(Radius.circular(10.0)),
             border: Border.all(color: Colors.black, width: 0.1),
           ),
-          child: child,
+          child: SizedBox(height: 26, child: child),
         ),
       ),
     );

@@ -6,6 +6,7 @@ class BaseWidget extends StatelessWidget {
   final Widget child;
   final bool safeAreaBottom;
   final bool safeAreaTop;
+  final bool resizeToAvoidBottomInset;
   final BottomAppBar? bottomNavigationBar;
   final Widget? floatingActionButton;
   final FloatingActionButtonLocation? floatingActionButtonLocation;
@@ -23,6 +24,7 @@ class BaseWidget extends StatelessWidget {
     this.floatingActionButtonLocation,
     this.onWillPop,
     this.overlayStyle,
+    this.resizeToAvoidBottomInset = false,
     this.backgroundColorBody = Colors.white
   }) : super(key: key);
 
@@ -36,7 +38,7 @@ class BaseWidget extends StatelessWidget {
         value: overlayStyle ?? SystemUiOverlayStyle.dark,
         child: Scaffold(
           backgroundColor: Colors.white,
-          resizeToAvoidBottomInset: false,
+          resizeToAvoidBottomInset: resizeToAvoidBottomInset,
           bottomNavigationBar: bottomNavigationBar,
           floatingActionButton: floatingActionButton,
           floatingActionButtonLocation: floatingActionButtonLocation,

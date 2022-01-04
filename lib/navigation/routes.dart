@@ -1,3 +1,5 @@
+import 'package:bingo_fe/screens/game/game_notifier.dart';
+import 'package:bingo_fe/screens/game/game_screen.dart';
 import 'package:bingo_fe/screens/home/home_notifier.dart';
 import 'package:bingo_fe/screens/home/home_screen.dart';
 import 'package:bingo_fe/screens/splash/splash_notifier.dart';
@@ -21,17 +23,30 @@ class Routes {
       child: const HomeScreen(),
     ),
 
+    RouteEnum.game.name! : (_) => ChangeNotifierProvider(
+      create: (_) => GameNotifier(),
+      child: const GameScreen(),
+    ),
+
+    //TODO summary and cards
+
   };
 }
 
 enum RouteEnum {
   splash,
-  home, //TODO add routes and names
+  home,
+  game,
+  cards,
+  summary
 }
 
 extension RouteNameExtension on RouteEnum {
   String? get name => {
     RouteEnum.splash : "/splash",
-    RouteEnum.home : "/home"
+    RouteEnum.home : "/home",
+    RouteEnum.game : "/game",
+    RouteEnum.cards : "/cards",
+    RouteEnum.summary : "/summary"
   }[this];
 }

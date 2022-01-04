@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return BaseWidget(
       overlayStyle: SystemUiOverlayStyle.dark,
+      resizeToAvoidBottomInset: true,
       child: _buildChild(),
     );
   }
@@ -58,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(height: 10 + MediaQuery.of(context).viewPadding.top,),
-                  const BoldText('BINGO FE', fontSize: 26),
+                  const BoldText('BINGO', fontSize: 26),
                   const SizedBox(height: 20,),
                 ],
               ),
@@ -78,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const RomanText('Insert a nickname to identify you!', color: Colors.black87),
+          const RomanText('Insert a nickname to identify you', color: Colors.black87),
           const SizedBox(height: 10,),
           AppFormFieldWidget(
             controller: notifier.nicknameController,
@@ -102,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onChanged: (value) => notifier.onRoomCodeChanged(value),
           ),
           const SizedBox(height: 10,),
-          AppButton(text: 'Connect', enabled: notifier.canConnectToRoom,),
+          AppButton(text: 'Connect', enabled: notifier.canConnectToRoom, onTap: () => notifier.onTapConnectRoom(), isLoading: notifier.connectToRoomLoading,),
           const SizedBox(height: 30,),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -134,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onChanged: (value) => notifier.onRoomNameChanged(value),
           ),
           const SizedBox(height: 10,),
-          AppButton(text: 'Start new room', enabled: notifier.canStartNewRoom,),
+          AppButton(text: 'Start new room', enabled: notifier.canStartNewRoom, onTap: () => notifier.onTapStartNewRoom(), isLoading: notifier.startRoomLoading,),
           const SizedBox(height: 10,),
           const RomanText('You will be the host of the room', fontSize: 12, color: Colors.grey,),
         ],
