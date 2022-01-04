@@ -10,13 +10,7 @@ class CreateRoomResponse{
   CreateRoomResponse({this.bingoPaper, this.roomCode, this.roomName});
 
   CreateRoomResponse.fromJson(Map<String, dynamic> json) {
-    if(json['bingo_paper_dto'] != null){
-      if(json['bingo_paper_dto'] is String){
-        bingoPaper = BingoPaper.fromJson(jsonDecode(json['bingo_paper_dto'].replaceAll('\n', '')));
-      } else if (json['bingo_paper_dto'] is Map){
-        bingoPaper = BingoPaper.fromJson(json['bingo_paper_dto']);
-      }
-    }
+    bingoPaper = json['bingo_paper_dto'] != null ? BingoPaper.fromJson(json['bingo_paper_dto']) : null;
     roomCode = json['room_code'];
     roomName = json['room_name'];
   }
