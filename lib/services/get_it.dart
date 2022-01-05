@@ -8,7 +8,7 @@ GetIt it = GetIt.instance;
 
 Future<void> registerServices() async{
 
-  final apiClient = ApiClient(basePath: ""); //TODO
+  final apiClient = ApiClient(basePath: "http://127.0.0.1:5000");
   const cacheClient = FlutterSecureStorage();
 
   it.registerLazySingleton(() => ApiService(client: apiClient));

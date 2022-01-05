@@ -1,3 +1,5 @@
+import 'package:bingo_fe/navigation/mixin_route.dart';
+import 'package:bingo_fe/widget/texts/roman_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +18,15 @@ class BaseNotifier extends ChangeNotifier{
     notifyListeners();
   }
 
+  showMessage(String message, {bool isError = false, int durationSec = 2}) {
+    ScaffoldMessenger.of(RouteMixin.navigatorKey.currentContext!).showSnackBar(
+      SnackBar(
+        content: RomanText(message, maxLines: 4,),
+        backgroundColor: isError ? Colors.red.shade300 : Colors.grey.shade100,
+        duration: Duration(seconds: durationSec),
+      )
+    );
+  }
 
   @override
   void dispose() {
