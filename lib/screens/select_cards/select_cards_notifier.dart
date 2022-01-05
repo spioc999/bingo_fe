@@ -2,6 +2,7 @@ import 'package:bingo_fe/base/base_notifier.dart';
 import 'package:bingo_fe/mixins/mixin_service.dart';
 import 'package:bingo_fe/models/card_model.dart';
 import 'package:bingo_fe/services/models/bingo_paper.dart';
+import 'package:flutter/cupertino.dart';
 
 class SelectCardsNotifier extends BaseNotifier with ServiceMixin{
   List<BingoPaper> _bingoPapers = [];
@@ -23,6 +24,7 @@ class SelectCardsNotifier extends BaseNotifier with ServiceMixin{
   }
 
   void _convertBingoCardsToCardModels() {
+    _cards = [];
     if(_bingoPapers.isNotEmpty){
       final bingoCardsLists = _bingoPapers.map((b) => b.cards).toList();
       for (var bingoCards in bingoCardsLists){
@@ -42,6 +44,23 @@ class SelectCardsNotifier extends BaseNotifier with ServiceMixin{
       _selectedCards.add(idCard);
     }
     notifyListeners();
+  }
+
+  loadNewBingoPaper() async {
+    final response = await getNextBingoPaperOfRoom(
+        roomCode,
+        _bingoPapers.map((b) => int.parse(b.bingoPaperId ?? '')).toList()
+    );
+
+    if(response.hasError){
+      showMessage(response.error!.errorMessage, isError: true);
+      return;
+    }
+
+    if(response.result != null){
+      _bingoPapers = [..._bingoPapers, response.result!];
+      _convertBingoCardsToCardModels();
+    }
   }
 
   onTapNext() async{}

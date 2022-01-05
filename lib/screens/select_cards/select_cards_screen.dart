@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:bingo_fe/base/base_widget.dart';
 import 'package:bingo_fe/screens/select_cards/select_cards_notifier.dart';
+import 'package:bingo_fe/widget/buttons/app_outlined_button.dart';
 import 'package:bingo_fe/widget/card_widget.dart';
 import 'package:bingo_fe/widget/common/scrolling_expanded_widget.dart';
 import 'package:bingo_fe/widget/texts/bold_text.dart';
@@ -17,6 +18,7 @@ class SelectCardsScreen extends StatefulWidget {
 }
 
 class _SelectCardsScreenState extends State<SelectCardsScreen> {
+
   @override
   void initState() {
     super.initState();
@@ -124,17 +126,33 @@ class _SelectCardsScreenState extends State<SelectCardsScreen> {
       itemBuilder: (_, index) {
         final card = notifier.cards[index];
         final isSelected = notifier.selectedCards.contains(card.id);
-        return Badge(
-          badgeColor: Colors.black,
-          badgeContent: const Icon(Icons.check, color: Colors.white, size: 20,),
-          showBadge: isSelected,
-          position: BadgePosition.topEnd(top: 5, end: 10),
-          child: InkWell(
-            onTap: () => notifier.onTapCard(card.id ?? -1),
-            child: CardWidget(
-              cardModel: card,
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Badge(
+              badgeColor: Colors.black,
+              badgeContent: const Icon(Icons.check, color: Colors.white, size: 20,),
+              showBadge: isSelected,
+              position: BadgePosition.topEnd(top: 5, end: 10),
+              child: InkWell(
+                onTap: () => notifier.onTapCard(card.id ?? -1),
+                child: CardWidget(
+                  cardModel: card,
+                ),
+              ),
             ),
-          ),
+            Visibility(
+              visible: index == notifier.cards.length - 1,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 100),
+                child: AppOutlinedButton(
+                  text: 'Load more',
+                  onTap: () => notifier.loadNewBingoPaper(),
+                  isLoading: notifier.isLoading,
+                ),
+              )
+            )
+          ],
         );
       },
       itemCount: notifier.cards.length,

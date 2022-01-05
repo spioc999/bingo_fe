@@ -13,6 +13,7 @@ class CardWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
       child: Card(
+        elevation: 2,
         shadowColor: cardModel.color,
         child: Padding(
           padding: const EdgeInsets.all(4.0),
