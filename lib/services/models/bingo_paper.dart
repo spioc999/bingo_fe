@@ -1,3 +1,5 @@
+import 'package:bingo_fe/helpers/cards_color_helper.dart';
+
 import 'bingo_card.dart';
 
 class BingoPaper{
@@ -14,6 +16,8 @@ class BingoPaper{
       json['cardDTOs'].forEach((v) {
         cards?.add(BingoCard.fromJson(v));
       });
+      cards?.forEach(
+        (c) => c.color = CardsColorHelper.getColorCardByPaperId(int.tryParse(bingoPaperId ?? '') ?? 1));
     }
     numberOfCards = json['number_of_cards'];
   }

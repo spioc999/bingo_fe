@@ -13,13 +13,13 @@ class GameNotifier extends BaseNotifier with ServiceMixin{
   init() async{
     _isHost = (await isHostUser()).result ?? false;
     _nickname = (await getNickname()).result;
+    _roomCode = (await getRoomCode()).result;
+    _roomName = (await getRoomName()).result;
     final roomAndPaperResponse = await getRoomCreatedAndPaper();
     if (roomAndPaperResponse.hasError){
-      showMessage('Error', isError: true);
+      showMessage(roomAndPaperResponse.error!.errorMessage, isError: true);
       return;
     }
-    _roomName = roomAndPaperResponse.result?.roomName;
-    _roomCode = roomAndPaperResponse.result?.roomCode;
     cards = roomAndPaperResponse.result?.bingoPaper?.cards?.map((c) => CardModel.fromBingoCard(c)).toList() ?? [];
     notifyListeners();
   }

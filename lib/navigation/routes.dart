@@ -2,8 +2,11 @@ import 'package:bingo_fe/screens/game/game_notifier.dart';
 import 'package:bingo_fe/screens/game/game_screen.dart';
 import 'package:bingo_fe/screens/home/home_notifier.dart';
 import 'package:bingo_fe/screens/home/home_screen.dart';
+import 'package:bingo_fe/screens/select_cards/select_cards_notifier.dart';
+import 'package:bingo_fe/screens/select_cards/select_cards_screen.dart';
 import 'package:bingo_fe/screens/splash/splash_notifier.dart';
 import 'package:bingo_fe/screens/splash/splash_screen.dart';
+import 'package:bingo_fe/services/models/bingo_paper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +31,18 @@ class Routes {
       child: const GameScreen(),
     ),
 
-    //TODO summary and cards
+    RouteEnum.selectCards.name! : (context) {
+      BingoPaper? bingoPaper;
+      if(ModalRoute.of(context)?.settings.arguments is BingoPaper){
+        bingoPaper = ModalRoute.of(context)?.settings.arguments as BingoPaper;
+      }
+      return ChangeNotifierProvider(
+        create: (_) => SelectCardsNotifier(bingoPaper),
+        child: const SelectCardsScreen(),
+      );
+    },
+
+    //TODO summary
 
   };
 }
@@ -37,7 +51,7 @@ enum RouteEnum {
   splash,
   home,
   game,
-  cards,
+  selectCards,
   summary
 }
 
@@ -46,7 +60,7 @@ extension RouteNameExtension on RouteEnum {
     RouteEnum.splash : "/splash",
     RouteEnum.home : "/home",
     RouteEnum.game : "/game",
-    RouteEnum.cards : "/cards",
+    RouteEnum.selectCards : "/select_cards",
     RouteEnum.summary : "/summary"
   }[this];
 }

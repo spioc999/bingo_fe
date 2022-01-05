@@ -1,13 +1,15 @@
 import 'package:bingo_fe/services/models/bingo_card.dart';
+import 'package:flutter/material.dart';
 
 class CardModel{
-  String? id;
+  int? id;
   List<ColumnCard>? columns;
+  Color color = Colors.red;
 
   CardModel(this.columns);
 
   CardModel.fromBingoCard(BingoCard card){
-    id = 'Card ${card.id}';
+    id = card.id;
     if(card.cardNumbers != null && card.cardNumbers!.isNotEmpty){
       columns = List.generate(
         card.cardNumbers![0].numbersAndExtracted?.length ?? 0,
@@ -21,6 +23,7 @@ class CardModel{
         }
       }
     }
+    color = card.color ?? Colors.red;
   }
 }
 

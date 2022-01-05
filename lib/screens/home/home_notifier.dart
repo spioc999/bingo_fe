@@ -17,7 +17,14 @@ class HomeNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
 
   HomeNotifier();
 
-  init() async{}
+  init() async{
+    final nicknameInCache = await getNickname();
+    if(!nicknameInCache.hasError){
+      nickname = nicknameInCache.result ?? '';
+      nicknameController.text = nickname;
+      notifyListeners();
+    }
+  }
 
   onNicknameChanged(String value) {
     nickname = value;
@@ -34,10 +41,23 @@ class HomeNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
     notifyListeners();
   }
 
-  onTapConnectRoom(){
+  onTapConnectRoom() async{
     _hasTappedConnect = true;
-    navigateTo(RouteEnum.game, shouldReplace: true);
+    showLoading();
+    final response = await joinRoom(roomCode, nickname, isSilent: true);
+    if(response.hasError){
+      _hasTappedConnect = false;
+      hideLoading();
+      showMessage(response.error!.errorMessage, isError: true);
+      return;
+    }
+    await saveIsHost(false);
+    await saveNickname(nickname);
+    await saveRoomCode(roomCode);
+    await saveRoomName(response.result?.roomName);
     _hasTappedConnect = false;
+    hideLoading();
+    navigateTo(RouteEnum.selectCards, shouldReplace: true, arguments: response.result?.bingoPaper);
   }
 
   onTapStartNewRoom() async{
@@ -50,8 +70,10 @@ class HomeNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
       showMessage(response.error!.errorMessage, isError: true);
       return;
     }
-    await saveIsHost(true);
+    await saveIsHost(response.result?.hostUniqueCode != null);
     await saveRoomCreatedAndPaper(response.result);
+    await saveRoomName(response.result?.roomName);
+    await saveRoomCode(response.result?.roomCode);
     await saveNickname(nickname);
     _hasTappedStart = false;
     hideLoading();

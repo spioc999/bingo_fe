@@ -100,7 +100,7 @@ class _GameScreenState extends State<GameScreen> {
           const SizedBox(height: 40,),
           ScrollingExpandedWidget(
             child: notifier.isHost ? _buildHostPaper(notifier) : _buildPlayerCards(notifier)
-          )
+          ),
         ],
       )
     );
@@ -151,7 +151,7 @@ class _GameScreenState extends State<GameScreen> {
           ),
         ),
         const SizedBox(height: 40,),
-        const BoldText('Player\'s cards', fontSize: 16,),
+        const BoldText('Player\'s selected cards', fontSize: 16,),
         const SizedBox(height: 10,),
         //TODO CardWidget()
       ],

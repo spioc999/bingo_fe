@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
+
 class BingoCard{
   List<CardRow>? cardNumbers;
   int? id;
+  Color? color;
 
   BingoCard({this.cardNumbers, this.id});
 

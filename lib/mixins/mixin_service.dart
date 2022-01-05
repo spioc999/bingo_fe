@@ -1,7 +1,9 @@
 import 'package:bingo_fe/base/base_notifier.dart';
 import 'package:bingo_fe/services/api/api_service.dart';
 import 'package:bingo_fe/services/cache/cache_service.dart';
+import 'package:bingo_fe/services/models/bingo_paper.dart';
 import 'package:bingo_fe/services/models/create_room_response.dart';
+import 'package:bingo_fe/services/models/joined_room_response.dart';
 import 'package:bingo_fe/services/service_response.dart';
 import 'package:get_it/get_it.dart';
 
@@ -14,6 +16,13 @@ mixin ServiceMixin on BaseNotifier {
   Future<ServiceResponse<CreateRoomResponse>> createNewRoom(String roomName, String nickname, {bool isSilent = false}) async {
     if(!isSilent) showLoading();
     ServiceResponse<CreateRoomResponse> response = await apiService.createNewRoom(roomName, nickname, cancelToken: cancelToken);
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
+  Future<ServiceResponse<JoinedRoomResponse>> joinRoom(String roomCode, String nickname, {bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse<JoinedRoomResponse> response = await apiService.joinRoom(roomCode, nickname, cancelToken: cancelToken);
     if(!isSilent) hideLoading();
     return response;
   }
@@ -48,6 +57,20 @@ mixin ServiceMixin on BaseNotifier {
     return response;
   }
 
+  Future<ServiceResponse> saveBingoPaper(BingoPaper? bingoPaper, {bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse response = await cacheService.saveBingoPaper(bingoPaper);
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
+  Future<ServiceResponse<BingoPaper>> getBingoPaper({bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse<BingoPaper> response = await cacheService.getBingoPaper();
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
   Future<ServiceResponse> saveNickname(String? nickname, {bool isSilent = false}) async {
     if(!isSilent) showLoading();
     ServiceResponse response = await cacheService.saveNickname(nickname);
@@ -58,6 +81,34 @@ mixin ServiceMixin on BaseNotifier {
   Future<ServiceResponse<String>> getNickname({bool isSilent = false}) async {
     if(!isSilent) showLoading();
     ServiceResponse<String> response = await cacheService.getNickname();
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
+  Future<ServiceResponse> saveRoomCode(String? roomCode, {bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse response = await cacheService.saveRoomCode(roomCode);
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
+  Future<ServiceResponse<String>> getRoomCode({bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse<String> response = await cacheService.getRoomCode();
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
+  Future<ServiceResponse> saveRoomName(String? roomName, {bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse response = await cacheService.saveRoomName(roomName);
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
+  Future<ServiceResponse<String>> getRoomName({bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse<String> response = await cacheService.getRoomName();
     if(!isSilent) hideLoading();
     return response;
   }
