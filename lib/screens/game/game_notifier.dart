@@ -17,10 +17,6 @@ class GameNotifier extends BaseNotifier with ServiceMixin{
     _isHost = (await isHostUser()).result ?? false;
     _nickname = (await getNickname()).result;
     final roomInfoResponse = await getRoomInfo();
-    if (roomInfoResponse.hasError){
-      showMessage(roomInfoResponse.error!.errorMessage, isError: true);
-      return;
-    }
     _roomCode = roomInfoResponse.result?.roomCode;
     _roomName = roomInfoResponse.result?.roomName;
     _hostUniqueCode = roomInfoResponse.result?.hostUniqueCode;
@@ -28,10 +24,30 @@ class GameNotifier extends BaseNotifier with ServiceMixin{
   }
 
   onTapExtractNumber() async{
-    showLoading();
-    await Future.delayed(Duration(seconds: 1), (){});
-    _lastExtractedNumber = 90;
-    hideLoading();
+    if(_isHost && _roomCode != null && _hostUniqueCode != null){
+      showLoading();
+      final response = await extractNumber(_roomCode!, _hostUniqueCode!, isSilent: true);
+
+      if(response.hasError){
+        hideLoading();
+        showMessage(response.error!.errorMessage, isError: true);
+        return;
+      }
+
+      _lastExtractedNumber = int.tryParse(response.result ?? '');
+      _refreshCards();
+      hideLoading();
+    }
+  }
+
+  _refreshCards() async{
+    final response = await getUserCards(roomCode, nickname, isSilent: true);
+    if(response.hasError){
+      hideLoading();
+      showMessage(response.error!.errorMessage, isError: true);
+      return;
+    }
+    cards = response.result?.cards?.map((c) => CardModel.fromBingoCard(c)).toList() ?? [];
   }
 
   bool get isHost => _isHost;
