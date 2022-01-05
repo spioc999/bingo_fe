@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-import 'package:bingo_fe/services/models/bingo_paper.dart';
-import 'package:bingo_fe/services/models/create_room_response.dart';
+import 'package:bingo_fe/models/room_info.dart';
 import 'package:bingo_fe/services/service_response.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -34,60 +33,6 @@ class CacheService{
     return response;
   }
 
-  Future<ServiceResponse> saveRoomCreatedAndPaper(CreateRoomResponse? roomCreatedAndPaper) async {
-    ServiceResponse response = ServiceResponse();
-    try{
-      await client.write(
-          key: StorageKeys.roomCreatedAndPaper,
-          value: roomCreatedAndPaper == null ? null : jsonEncode(roomCreatedAndPaper.toJson()));
-    } catch (_) {
-      response.error = _genericError;
-    }
-    return response;
-  }
-
-  Future<ServiceResponse<CreateRoomResponse>> getRoomCreatedAndPaper() async {
-    ServiceResponse<CreateRoomResponse> response = ServiceResponse();
-    String? data = await client.read(key: StorageKeys.roomCreatedAndPaper);
-    if(data == null){
-      response.error = _notFoundError;
-      return response;
-    }
-    try{
-      response.result = CreateRoomResponse.fromJson(jsonDecode(data));
-    } catch (_) {
-      response.error = _genericError;
-    }
-    return response;
-  }
-
-  Future<ServiceResponse> saveBingoPaper(BingoPaper? bingoPaper) async {
-    ServiceResponse response = ServiceResponse();
-    try{
-      await client.write(
-          key: StorageKeys.bingoPaper,
-          value: bingoPaper == null ? null : jsonEncode(bingoPaper.toJson()));
-    } catch (_) {
-      response.error = _genericError;
-    }
-    return response;
-  }
-
-  Future<ServiceResponse<BingoPaper>> getBingoPaper() async {
-    ServiceResponse<BingoPaper> response = ServiceResponse();
-    String? data = await client.read(key: StorageKeys.bingoPaper);
-    if(data == null){
-      response.error = _notFoundError;
-      return response;
-    }
-    try{
-      response.result = BingoPaper.fromJson(jsonDecode(data));
-    } catch (_) {
-      response.error = _genericError;
-    }
-    return response;
-  }
-
   Future<ServiceResponse> saveNickname(String? nickname) async {
     ServiceResponse response = ServiceResponse();
     try{
@@ -111,49 +56,30 @@ class CacheService{
     return response;
   }
 
-  Future<ServiceResponse> saveRoomCode(String? roomCode) async {
+  Future<ServiceResponse> saveRoomInfo(RoomInfo? roomInfo) async {
     ServiceResponse response = ServiceResponse();
     try{
       await client.write(
-          key: StorageKeys.roomCode,
-          value: roomCode);
+          key: StorageKeys.roomInfo,
+          value: roomInfo == null ? null : jsonEncode(roomInfo.toJson()));
     } catch (_) {
       response.error = _genericError;
     }
     return response;
   }
 
-  Future<ServiceResponse<String>> getRoomCode() async {
-    ServiceResponse<String> response = ServiceResponse();
-    String? data = await client.read(key: StorageKeys.roomCode);
+  Future<ServiceResponse<RoomInfo>> getRoomInfo() async {
+    ServiceResponse<RoomInfo> response = ServiceResponse();
+    String? data = await client.read(key: StorageKeys.roomInfo);
     if(data == null){
       response.error = _notFoundError;
       return response;
     }
-    response.result = data;
-    return response;
-  }
-
-  Future<ServiceResponse> saveRoomName(String? roomName) async {
-    ServiceResponse response = ServiceResponse();
     try{
-      await client.write(
-          key: StorageKeys.roomName,
-          value: roomName);
+      response.result = RoomInfo.fromJson(jsonDecode(data));
     } catch (_) {
       response.error = _genericError;
     }
-    return response;
-  }
-
-  Future<ServiceResponse<String>> getRoomName() async {
-    ServiceResponse<String> response = ServiceResponse();
-    String? data = await client.read(key: StorageKeys.roomName);
-    if(data == null){
-      response.error = _notFoundError;
-      return response;
-    }
-    response.result = data;
     return response;
   }
 
@@ -166,9 +92,6 @@ class CacheService{
 
 class StorageKeys{
   static const isHost = 'IS_HOST';
-  static const roomCreatedAndPaper = 'ROOM_CREATED_AND_PAPER';
-  static const bingoPaper = 'BINGO_PAPER';
   static const nickname = 'NICKNAME';
-  static const roomCode = 'ROOM_CODE';
-  static const roomName = 'ROOM_NAME';
+  static const roomInfo = 'ROOM_INFO';
 }

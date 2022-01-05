@@ -1,3 +1,4 @@
+import 'package:bingo_fe/models/card_model.dart';
 import 'package:bingo_fe/screens/game/game_notifier.dart';
 import 'package:bingo_fe/screens/game/game_screen.dart';
 import 'package:bingo_fe/screens/home/home_notifier.dart';
@@ -26,10 +27,16 @@ class Routes {
       child: const HomeScreen(),
     ),
 
-    RouteEnum.game.name! : (_) => ChangeNotifierProvider(
-      create: (_) => GameNotifier(),
-      child: const GameScreen(),
-    ),
+    RouteEnum.game.name! : (context) {
+      List<CardModel> cards = [];
+      if(ModalRoute.of(context)?.settings.arguments is List<CardModel>){
+        cards = ModalRoute.of(context)?.settings.arguments as List<CardModel>;
+      }
+      return ChangeNotifierProvider(
+        create: (_) => GameNotifier(cards),
+        child: const GameScreen(),
+      );
+    },
 
     RouteEnum.selectCards.name! : (context) {
       BingoPaper? bingoPaper;

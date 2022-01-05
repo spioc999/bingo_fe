@@ -21,7 +21,7 @@ class AppOutlinedButton extends StatelessWidget {
     return InkWell(
       splashColor: Colors.black,
       borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-      onTap: enabled && onTap != null ? () => onTap!() : null,
+      onTap: enabled && onTap != null && !isLoading ? () => onTap!() : null,
       onLongPress: enabled && onLongPress != null ? () => onLongPress!() : null,
       child: Container(
         alignment: Alignment.center,

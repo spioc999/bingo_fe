@@ -8,19 +8,22 @@ class GameNotifier extends BaseNotifier with ServiceMixin{
   String? _nickname;
   String? _roomName;
   String? _roomCode;
+  String? _hostUniqueCode;
   List<CardModel> cards = [];
+
+  GameNotifier(this.cards);
 
   init() async{
     _isHost = (await isHostUser()).result ?? false;
     _nickname = (await getNickname()).result;
-    _roomCode = (await getRoomCode()).result;
-    _roomName = (await getRoomName()).result;
-    final roomAndPaperResponse = await getRoomCreatedAndPaper();
-    if (roomAndPaperResponse.hasError){
-      showMessage(roomAndPaperResponse.error!.errorMessage, isError: true);
+    final roomInfoResponse = await getRoomInfo();
+    if (roomInfoResponse.hasError){
+      showMessage(roomInfoResponse.error!.errorMessage, isError: true);
       return;
     }
-    cards = roomAndPaperResponse.result?.bingoPaper?.cards?.map((c) => CardModel.fromBingoCard(c)).toList() ?? [];
+    _roomCode = roomInfoResponse.result?.roomCode;
+    _roomName = roomInfoResponse.result?.roomName;
+    _hostUniqueCode = roomInfoResponse.result?.hostUniqueCode;
     notifyListeners();
   }
 
@@ -36,5 +39,5 @@ class GameNotifier extends BaseNotifier with ServiceMixin{
   String get roomCode => _roomCode ?? '';
   String get nickname => _nickname ?? '';
   int? get lastExtractedNumber => _lastExtractedNumber;
-  int get numberUsersConnected => 3;
+  int get numberUsersConnected => 3; //TODO
 }

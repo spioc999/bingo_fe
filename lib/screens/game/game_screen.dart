@@ -1,5 +1,4 @@
 import 'package:bingo_fe/base/base_widget.dart';
-import 'package:bingo_fe/models/card_model.dart';
 import 'package:bingo_fe/screens/game/game_notifier.dart';
 import 'package:bingo_fe/widget/buttons/app_button.dart';
 import 'package:bingo_fe/widget/card_widget.dart';
@@ -97,7 +96,7 @@ class _GameScreenState extends State<GameScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 40,),
+          const SizedBox(height: 30,),
           ScrollingExpandedWidget(
             child: notifier.isHost ? _buildHostPaper(notifier) : _buildPlayerCards(notifier)
           ),
@@ -150,11 +149,30 @@ class _GameScreenState extends State<GameScreen> {
             child: RomanText('Awaiting for host to start the game!', fontSize: 13, color: Colors.black87,),
           ),
         ),
-        const SizedBox(height: 40,),
-        const BoldText('Player\'s selected cards', fontSize: 16,),
+        const SizedBox(height: 30,),
+        const BoldText('Player\'s cards', fontSize: 16,),
         const SizedBox(height: 10,),
-        //TODO CardWidget()
+        _buildCards(notifier)
       ],
+    );
+  }
+
+  _buildCards(GameNotifier notifier) {
+    if(notifier.cards.isEmpty){
+      return const IgnorePointer();
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      physics: const BouncingScrollPhysics(),
+      itemBuilder: (_, index) {
+        final card = notifier.cards[index];
+        return CardWidget(
+          cardModel: card,
+        );
+      },
+      itemCount: notifier.cards.length,
     );
   }
 }

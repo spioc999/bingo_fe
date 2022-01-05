@@ -1,5 +1,7 @@
 import 'package:bingo_fe/base/base_notifier.dart';
 import 'package:bingo_fe/mixins/mixin_service.dart';
+import 'package:bingo_fe/models/card_model.dart';
+import 'package:bingo_fe/models/room_info.dart';
 import 'package:bingo_fe/navigation/mixin_route.dart';
 import 'package:bingo_fe/navigation/routes.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +55,7 @@ class HomeNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
     }
     await saveIsHost(false);
     await saveNickname(nickname);
-    await saveRoomCode(roomCode);
-    await saveRoomName(response.result?.roomName);
+    await saveRoomInfo(RoomInfo(roomCode: roomCode, roomName: response.result?.roomName));
     _hasTappedConnect = false;
     hideLoading();
     navigateTo(RouteEnum.selectCards, shouldReplace: true, arguments: response.result?.bingoPaper);
@@ -71,13 +72,16 @@ class HomeNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
       return;
     }
     await saveIsHost(response.result?.hostUniqueCode != null);
-    await saveRoomCreatedAndPaper(response.result);
-    await saveRoomName(response.result?.roomName);
-    await saveRoomCode(response.result?.roomCode);
+    await saveRoomInfo(RoomInfo(
+      roomCode: response.result?.roomCode,
+      roomName: response.result?.roomName,
+      hostUniqueCode: response.result?.hostUniqueCode
+    ));
     await saveNickname(nickname);
+    var cards = response.result?.bingoPaper?.cards?.map((c) => CardModel.fromBingoCard(c)).toList() ?? [];
     _hasTappedStart = false;
     hideLoading();
-    navigateTo(RouteEnum.game, shouldReplace: true);
+    navigateTo(RouteEnum.game, shouldReplace: true, arguments: cards);
   }
 
   bool get canConnectToRoom => nickname.isNotEmpty && roomCode.isNotEmpty && roomCode.length == 5;

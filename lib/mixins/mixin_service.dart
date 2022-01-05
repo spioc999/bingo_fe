@@ -1,9 +1,11 @@
 import 'package:bingo_fe/base/base_notifier.dart';
+import 'package:bingo_fe/models/room_info.dart';
 import 'package:bingo_fe/services/api/api_service.dart';
 import 'package:bingo_fe/services/cache/cache_service.dart';
 import 'package:bingo_fe/services/models/bingo_paper.dart';
 import 'package:bingo_fe/services/models/create_room_response.dart';
 import 'package:bingo_fe/services/models/joined_room_response.dart';
+import 'package:bingo_fe/services/models/user_cards.dart';
 import 'package:bingo_fe/services/service_response.dart';
 import 'package:get_it/get_it.dart';
 
@@ -34,6 +36,20 @@ mixin ServiceMixin on BaseNotifier {
     return response;
   }
 
+  Future<ServiceResponse<UserCards>> getUserCards(String roomCode, String nickname, {bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse<UserCards> response = await apiService.getUserCards(roomCode, nickname, cancelToken: cancelToken);
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
+  Future<ServiceResponse<int>> assignCardsToUser(String roomCode, String nickname, List<int> cards, {bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse<int> response = await apiService.assignCardsToUser(roomCode, nickname, cards, cancelToken: cancelToken);
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
   ///CACHE
 
   Future<ServiceResponse> saveIsHost(bool? isHost, {bool isSilent = false}) async {
@@ -46,34 +62,6 @@ mixin ServiceMixin on BaseNotifier {
   Future<ServiceResponse<bool>> isHostUser({bool isSilent = false}) async {
     if(!isSilent) showLoading();
     ServiceResponse<bool> response = await cacheService.isHost();
-    if(!isSilent) hideLoading();
-    return response;
-  }
-
-  Future<ServiceResponse> saveRoomCreatedAndPaper(CreateRoomResponse? roomCreatedAndPaper, {bool isSilent = false}) async {
-    if(!isSilent) showLoading();
-    ServiceResponse response = await cacheService.saveRoomCreatedAndPaper(roomCreatedAndPaper);
-    if(!isSilent) hideLoading();
-    return response;
-  }
-
-  Future<ServiceResponse<CreateRoomResponse>> getRoomCreatedAndPaper({bool isSilent = false}) async {
-    if(!isSilent) showLoading();
-    ServiceResponse<CreateRoomResponse> response = await cacheService.getRoomCreatedAndPaper();
-    if(!isSilent) hideLoading();
-    return response;
-  }
-
-  Future<ServiceResponse> saveBingoPaper(BingoPaper? bingoPaper, {bool isSilent = false}) async {
-    if(!isSilent) showLoading();
-    ServiceResponse response = await cacheService.saveBingoPaper(bingoPaper);
-    if(!isSilent) hideLoading();
-    return response;
-  }
-
-  Future<ServiceResponse<BingoPaper>> getBingoPaper({bool isSilent = false}) async {
-    if(!isSilent) showLoading();
-    ServiceResponse<BingoPaper> response = await cacheService.getBingoPaper();
     if(!isSilent) hideLoading();
     return response;
   }
@@ -92,30 +80,16 @@ mixin ServiceMixin on BaseNotifier {
     return response;
   }
 
-  Future<ServiceResponse> saveRoomCode(String? roomCode, {bool isSilent = false}) async {
+  Future<ServiceResponse> saveRoomInfo(RoomInfo? roomInfo, {bool isSilent = false}) async {
     if(!isSilent) showLoading();
-    ServiceResponse response = await cacheService.saveRoomCode(roomCode);
+    ServiceResponse response = await cacheService.saveRoomInfo(roomInfo);
     if(!isSilent) hideLoading();
     return response;
   }
 
-  Future<ServiceResponse<String>> getRoomCode({bool isSilent = false}) async {
+  Future<ServiceResponse<RoomInfo>> getRoomInfo({bool isSilent = false}) async {
     if(!isSilent) showLoading();
-    ServiceResponse<String> response = await cacheService.getRoomCode();
-    if(!isSilent) hideLoading();
-    return response;
-  }
-
-  Future<ServiceResponse> saveRoomName(String? roomName, {bool isSilent = false}) async {
-    if(!isSilent) showLoading();
-    ServiceResponse response = await cacheService.saveRoomName(roomName);
-    if(!isSilent) hideLoading();
-    return response;
-  }
-
-  Future<ServiceResponse<String>> getRoomName({bool isSilent = false}) async {
-    if(!isSilent) showLoading();
-    ServiceResponse<String> response = await cacheService.getRoomName();
+    ServiceResponse<RoomInfo> response = await cacheService.getRoomInfo();
     if(!isSilent) hideLoading();
     return response;
   }

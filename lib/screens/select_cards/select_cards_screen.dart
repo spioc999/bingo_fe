@@ -40,8 +40,12 @@ class _SelectCardsScreenState extends State<SelectCardsScreen> {
           position: BadgePosition.topEnd(top: -1, end: -1),
           child: FloatingActionButton(
             backgroundColor: notifier.selectedCards.isNotEmpty ? Colors.red : Colors.red.shade200,
-            onPressed: notifier.selectedCards.isNotEmpty ? () => notifier.onTapNext() : () {},
-            child: Icon(
+            onPressed: notifier.selectedCards.isNotEmpty && !notifier.nextLoading ? () => notifier.onTapNext() : () {},
+            child: notifier.nextLoading ? const SizedBox(
+              height: 26,
+              width: 26,
+              child: CircularProgressIndicator(color: Colors.black,),
+            ) : Icon(
               Icons.navigate_next_outlined,
               color: notifier.selectedCards.isNotEmpty ? Colors.black : Colors.black45,
               size: 35,
@@ -148,7 +152,7 @@ class _SelectCardsScreenState extends State<SelectCardsScreen> {
                 child: AppOutlinedButton(
                   text: 'Load more',
                   onTap: () => notifier.loadNewBingoPaper(),
-                  isLoading: notifier.isLoading,
+                  isLoading: notifier.loadMoreLoading,
                 ),
               )
             )

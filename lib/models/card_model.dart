@@ -23,7 +23,7 @@ class CardModel{
         }
       }
     }
-    color = card.color ?? Colors.red;
+    color = Colors.red; //TODO convert color
   }
 }
 

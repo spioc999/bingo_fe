@@ -1,13 +1,16 @@
 import 'package:bingo_fe/base/base_notifier.dart';
 import 'package:bingo_fe/mixins/mixin_service.dart';
 import 'package:bingo_fe/models/card_model.dart';
+import 'package:bingo_fe/navigation/mixin_route.dart';
+import 'package:bingo_fe/navigation/routes.dart';
 import 'package:bingo_fe/services/models/bingo_paper.dart';
-import 'package:flutter/cupertino.dart';
 
-class SelectCardsNotifier extends BaseNotifier with ServiceMixin{
+class SelectCardsNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   List<BingoPaper> _bingoPapers = [];
   List<CardModel> _cards = [];
   final List<int> _selectedCards = [];
+  bool _hasTappedLoadMore = false;
+  bool _hasTappedNext = false;
 
   String? _nickname;
   String? _roomCode;
@@ -18,7 +21,7 @@ class SelectCardsNotifier extends BaseNotifier with ServiceMixin{
 
   init() async {
     _nickname = (await getNickname()).result;
-    _roomCode = (await getRoomCode()).result;
+    _roomCode = (await getRoomInfo()).result?.roomCode;
     _convertBingoCardsToCardModels();
     notifyListeners();
   }
@@ -47,10 +50,12 @@ class SelectCardsNotifier extends BaseNotifier with ServiceMixin{
   }
 
   loadNewBingoPaper() async {
+    _hasTappedLoadMore = true;
     final response = await getNextBingoPaperOfRoom(
         roomCode,
         _bingoPapers.map((b) => int.parse(b.bingoPaperId ?? '')).toList()
     );
+    _hasTappedLoadMore = false;
 
     if(response.hasError){
       showMessage(response.error!.errorMessage, isError: true);
@@ -63,10 +68,21 @@ class SelectCardsNotifier extends BaseNotifier with ServiceMixin{
     }
   }
 
-  onTapNext() async{}
+  onTapNext() async{
+    _hasTappedNext = true;
+    final response = await assignCardsToUser(roomCode, nickname, selectedCards);
+    _hasTappedNext = false;
+    if(response.hasError){
+      showMessage(response.error!.errorMessage, isError: true);
+      return;
+    }
+    navigateTo(RouteEnum.game, shouldReplace: true, arguments: _cards.where((c) => _selectedCards.contains(c.id)).toList());
+  }
 
   String get roomCode => _roomCode ?? '';
   String get nickname => _nickname ?? '';
   List<CardModel> get cards => _cards;
   List<int> get selectedCards => _selectedCards;
+  bool get loadMoreLoading => isLoading && _hasTappedLoadMore;
+  bool get nextLoading => isLoading && _hasTappedNext;
 }
