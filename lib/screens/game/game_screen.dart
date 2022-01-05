@@ -86,7 +86,7 @@ class _GameScreenState extends State<GameScreen> {
                         height: 7,
                         decoration: const BoxDecoration(
                           color: Colors.green,
-                          shape: BoxShape.circle,
+                          shape: BoxShape.circle, //TODO
                         )
                       ),
                       const SizedBox(width: 5,),

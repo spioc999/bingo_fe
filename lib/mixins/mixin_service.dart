@@ -29,6 +29,13 @@ mixin ServiceMixin on BaseNotifier {
     return response;
   }
 
+  Future<ServiceResponse<String>> extractNumber(String roomCode, String hostUniqueCode, {bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse<String> response = await apiService.extractNumber(roomCode, hostUniqueCode, cancelToken: cancelToken);
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
   Future<ServiceResponse<BingoPaper>> getNextBingoPaperOfRoom(String roomCode, List<int> exclude, {bool isSilent = false}) async {
     if(!isSilent) showLoading();
     ServiceResponse<BingoPaper> response = await apiService.getNextBingoPaperOfRoom(roomCode, exclude, cancelToken: cancelToken);

@@ -15,7 +15,7 @@ class ApiService{
 
   ApiService({required this.client});
 
-
+  /// ROOM
   Future<ServiceResponse<CreateRoomResponse>> createNewRoom(String roomName, String nickname, {CancelToken? cancelToken}) async {
     ServiceResponse<CreateRoomResponse> response = ServiceResponse();
 
@@ -50,6 +50,24 @@ class ApiService{
     return response;
   }
 
+  Future<ServiceResponse<String>> extractNumber(String roomCode, String hostUniqueCode, {CancelToken? cancelToken}) async {
+    ServiceResponse<String> response = ServiceResponse();
+
+    try{
+      response.result = await client.makePost<String>("/room/extract/$roomCode/$hostUniqueCode",
+          cancelToken: cancelToken,
+          converter: (data) => data);
+
+    } on DioError catch (e) {
+      response.error = ServiceError(e.response?.statusCode ?? _genericError.errorCode, e.response?.data ?? e.response?.statusMessage ?? _genericError.errorMessage);
+    }catch(e) {
+      response.error = _genericError;
+    }
+
+    return response;
+  }
+
+  /// PAPER
   Future<ServiceResponse<BingoPaper>> getNextBingoPaperOfRoom(String roomCode, List<int> exclude, {CancelToken? cancelToken}) async {
     ServiceResponse<BingoPaper> response = ServiceResponse();
 
@@ -69,6 +87,8 @@ class ApiService{
     return response;
   }
 
+
+  /// USER
   Future<ServiceResponse<UserCards>> getUserCards(String roomCode, String nickname, {CancelToken? cancelToken}) async {
     ServiceResponse<UserCards> response = ServiceResponse();
 
