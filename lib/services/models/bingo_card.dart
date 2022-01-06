@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class BingoCard{
   List<CardRow>? cardNumbers;
   int? id;
@@ -15,6 +13,7 @@ class BingoCard{
       });
     }
     id = json['id'];
+    color = json['color'];
   }
 
   Map<String, dynamic> toJson() {
@@ -23,6 +22,7 @@ class BingoCard{
       data['card_numbers'] = cardNumbers!.map((c) => c.numbersAndExtracted).toList();
     }
     data['id'] = id;
+    data['color'] = color;
     return data;
   }
 }

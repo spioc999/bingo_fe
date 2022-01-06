@@ -35,12 +35,12 @@ class GameNotifier extends BaseNotifier with ServiceMixin{
       }
 
       _lastExtractedNumber = int.tryParse(response.result ?? '');
-      _refreshCards();
+      await _refreshCards();
       hideLoading();
     }
   }
 
-  _refreshCards() async{
+  Future<void> _refreshCards() async{
     final response = await getUserCards(roomCode, nickname, isSilent: true);
     if(response.hasError){
       hideLoading();

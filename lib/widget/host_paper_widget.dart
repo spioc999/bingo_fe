@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 class HostPaperWidget extends StatelessWidget {
 
   final List<CardModel> hostCards;
+  final Color color;
 
-  const HostPaperWidget({required this.hostCards, Key? key}) : super(key: key);
+  const HostPaperWidget({Key? key, required this.hostCards, this.color = Colors.red}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +79,7 @@ class HostPaperWidget extends StatelessWidget {
                         horizontal: (number ?? 0) < 10 ? 5 : 3.5
                     ),
                     decoration: BoxDecoration(
-                      color: extracted ? Colors.red : Colors.white,
+                      color: extracted ? color : Colors.white,
                       shape: BoxShape.circle,
                     ),
                     child: RomanText(
