@@ -1,8 +1,16 @@
 import 'package:bingo_fe/base/base_notifier.dart';
 import 'package:bingo_fe/mixins/mixin_service.dart';
 import 'package:bingo_fe/models/card_model.dart';
+import 'package:bingo_fe/navigation/mixin_route.dart';
+import 'package:bingo_fe/navigation/routes.dart';
+import 'package:bingo_fe/services/models/extract_number_message_socket.dart';
+import 'package:bingo_fe/services/models/message_socket.dart';
+import 'package:bingo_fe/services/models/update_user_message_socket.dart';
+import 'package:bingo_fe/services/models/winner_message_socket.dart';
+import 'package:bingo_fe/services/socket/socket_helper.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class GameNotifier extends BaseNotifier with ServiceMixin{
+class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   int? _lastExtractedNumber;
   bool _isHost = false;
   String? _nickname;
@@ -10,6 +18,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin{
   String? _roomCode;
   String? _hostUniqueCode;
   List<CardModel> cards = [];
+  IO.Socket? socket;
 
   GameNotifier(this.cards);
 
@@ -20,6 +29,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin{
     _roomCode = roomInfoResponse.result?.roomCode;
     _roomName = roomInfoResponse.result?.roomName;
     _hostUniqueCode = roomInfoResponse.result?.hostUniqueCode;
+    _addListenersSocketAndJoin();
     notifyListeners();
   }
 
@@ -30,7 +40,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin{
 
       if(response.hasError){
         hideLoading();
-        showMessage(response.error!.errorMessage, isError: true);
+        showMessage(response.error!.errorMessage, messageType: MessageTypeEnum.error);
         return;
       }
 
@@ -44,10 +54,73 @@ class GameNotifier extends BaseNotifier with ServiceMixin{
     final response = await getUserCards(roomCode, nickname, isSilent: true);
     if(response.hasError){
       hideLoading();
-      showMessage(response.error!.errorMessage, isError: true);
+      showMessage(response.error!.errorMessage, messageType: MessageTypeEnum.error);
       return;
     }
     cards = response.result?.cards?.map((c) => CardModel.fromBingoCard(c)).toList() ?? [];
+  }
+
+  void _addListenersSocketAndJoin() {
+    socket = SocketHelper.createAndConnectSocket(apiService.client.basePath);
+    SocketHelper.addListenersOnSocket(socket,
+      onErrorMessage: _onErrorMessageSocket,
+      onRoomServiceMessages: _onRoomServiceMessages,
+      onExtractedNumber: _onExtractedNumber,
+      onWinnerEvent: _onWinnerEvent,
+      onUpdatedCard: _onUpdatedCard
+    );
+    SocketHelper.joinRoomSocket(socket, _roomCode, _nickname);
+  }
+
+  void _onErrorMessageSocket(dynamic data) {
+    final message = MessageSocket.fromJson(data);
+    showMessage(message.msg ?? '', messageType: MessageTypeEnum.error);
+  }
+
+  void _onRoomServiceMessages(dynamic data){
+    final message = MessageSocket.fromJson(data);
+    showMessage(message.msg ?? '');
+  }
+
+  void _onExtractedNumber(dynamic data){
+    final message = ExtractNumberMessageSocket.fromJson(data);
+    if(!_isHost){
+      _lastExtractedNumber = message.number;
+      notifyListeners();
+    }
+  }
+
+  void _onWinnerEvent(dynamic data){
+    final message = WinnerMessageSocket.fromJson(data);
+    showMessage(
+      '${message.userNickname == _nickname ? 'You' : message.userNickname} won ${message.winType?.toString().split('.')[1]} with card ${message.cardId}!',
+      messageType: MessageTypeEnum.win,
+      isBold: message.userNickname == _nickname
+    );
+    if(message.winType == WinTypeEnum.TOMBOLA){
+      //TODO navigate to summary
+    }
+  }
+
+  void _onUpdatedCard(dynamic data) async{
+    final message = UpdateUserMessageSocket.fromJson(data);
+    if(!_isHost && message.userNickname == _nickname){
+      await _refreshCards();
+      notifyListeners();
+    }
+  }
+
+  void leaveGame() {
+    SocketHelper.leaveRoomSocket(socket);
+    saveRoomInfo(null, isSilent: true);
+    navigateTo(RouteEnum.home, shouldClearAll: true);
+  }
+
+  @override
+  void dispose() {
+    socket?.disconnect();
+    socket?.dispose();
+    super.dispose();
   }
 
   bool get isHost => _isHost;
@@ -56,4 +129,6 @@ class GameNotifier extends BaseNotifier with ServiceMixin{
   String get nickname => _nickname ?? '';
   int? get lastExtractedNumber => _lastExtractedNumber;
   int get numberUsersConnected => 3; //TODO
+
+
 }

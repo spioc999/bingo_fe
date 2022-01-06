@@ -1,4 +1,5 @@
 import 'package:bingo_fe/navigation/mixin_route.dart';
+import 'package:bingo_fe/widget/texts/bold_text.dart';
 import 'package:bingo_fe/widget/texts/roman_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +19,24 @@ class BaseNotifier extends ChangeNotifier{
     notifyListeners();
   }
 
-  showMessage(String message, {bool isError = false, int durationSec = 2}) {
+  showMessage(String message, {MessageTypeEnum messageType = MessageTypeEnum.info, int durationSec = 2, bool isBold = false}) {
+    Color color;
+    switch(messageType){
+
+      case MessageTypeEnum.info:
+        color = Colors.grey.shade100;
+        break;
+      case MessageTypeEnum.error:
+        color = Colors.red.shade300;
+        break;
+      case MessageTypeEnum.win:
+        color = Colors.green.shade300;
+        break;
+    }
     ScaffoldMessenger.of(RouteMixin.navigatorKey.currentContext!).showSnackBar(
       SnackBar(
-        content: RomanText(message, maxLines: 4,),
-        backgroundColor: isError ? Colors.red.shade300 : Colors.grey.shade100,
+        content: isBold ? BoldText(message, maxLines: 4,) : RomanText(message, maxLines: 4,),
+        backgroundColor: color,
         duration: Duration(seconds: durationSec),
       )
     );
@@ -43,4 +57,10 @@ class BaseNotifier extends ChangeNotifier{
   }
 
   @protected bool get isDisposed => _isDisposed;
+}
+
+enum MessageTypeEnum{
+  info,
+  error,
+  win
 }

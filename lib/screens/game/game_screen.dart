@@ -1,6 +1,7 @@
 import 'package:bingo_fe/base/base_widget.dart';
 import 'package:bingo_fe/screens/game/game_notifier.dart';
 import 'package:bingo_fe/widget/buttons/app_button.dart';
+import 'package:bingo_fe/widget/buttons/app_outlined_button.dart';
 import 'package:bingo_fe/widget/card_widget.dart';
 import 'package:bingo_fe/widget/common/scrolling_expanded_widget.dart';
 import 'package:bingo_fe/widget/host_paper_widget.dart';
@@ -29,52 +30,64 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseWidget(
-      overlayStyle: SystemUiOverlayStyle.dark,
-      child: _buildChild(context),
+    return Consumer<GameNotifier>(
+      builder: (_, notifier, __) => BaseWidget(
+        overlayStyle: SystemUiOverlayStyle.dark,
+        safeAreaBottom: true,
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.grey.shade400,
+          onPressed: () => notifier.leaveGame(),
+          child: const Icon(
+            Icons.exit_to_app_outlined,
+            color: Colors.black,
+            size: 25,
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        child: _buildChild(context, notifier),
+      )
     );
   }
 
-  _buildChild(BuildContext context) {
-    return Consumer<GameNotifier>(
-      builder: (_, notifier, __) => Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [
-                    Colors.red,
-                    Colors.red.withOpacity(0.8)
-                  ]
-              ),
-              borderRadius: const BorderRadius.only(
-                  bottomRight: Radius.circular(25.0)),
+  _buildChild(BuildContext context, GameNotifier notifier) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [
+                  Colors.red,
+                  Colors.red.withOpacity(0.8)
+                ]
             ),
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 10 + MediaQuery.of(context).viewPadding.top,),
-                BoldText(notifier.roomName, fontSize: 26),
-                const SizedBox(height: 8,),
-                BoldText('Room code: ${notifier.roomCode}', fontSize: 14),
-                const SizedBox(height: 15,),
-              ],
-            ),
+            borderRadius: const BorderRadius.only(
+                bottomRight: Radius.circular(25.0)),
           ),
-          const SizedBox(height: 20,),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Icon(Icons.account_circle_outlined, color: Colors.grey,),
-                const SizedBox(width: 10,),
-                RomanText('${notifier.nickname}${notifier.isHost ? ' (HOST)' : ''}', color: Colors.black87,),
-                const Spacer(),
-                Visibility(
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 10 + MediaQuery.of(context).viewPadding.top,),
+              BoldText(notifier.roomName, fontSize: 26),
+              const SizedBox(height: 8,),
+              BoldText('Room code: ${notifier.roomCode}', fontSize: 14),
+              const SizedBox(height: 15,),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20,),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const Icon(Icons.account_circle_outlined, color: Colors.grey,),
+              const SizedBox(width: 10,),
+              RomanText('${notifier.nickname}${notifier.isHost ? ' (HOST)' : ''}', color: Colors.black87,),
+              const Spacer(),
+              Visibility(
                   visible: notifier.isHost,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -82,26 +95,25 @@ class _GameScreenState extends State<GameScreen> {
                       RomanText(notifier.numberUsersConnected.toString(), color: Colors.black87,),
                       const SizedBox(width: 5,),
                       Container(
-                        width: 7,
-                        height: 7,
-                        decoration: const BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle, //TODO
-                        )
+                          width: 7,
+                          height: 7,
+                          decoration: const BoxDecoration(
+                            color: Colors.green,
+                            shape: BoxShape.circle, //TODO
+                          )
                       ),
                       const SizedBox(width: 5,),
                     ],
                   )
-                )
-              ],
-            ),
+              )
+            ],
           ),
-          const SizedBox(height: 30,),
-          ScrollingExpandedWidget(
+        ),
+        const SizedBox(height: 30,),
+        ScrollingExpandedWidget(
             child: notifier.isHost ? _buildHostPaper(notifier) : _buildPlayerCards(notifier)
-          ),
-        ],
-      )
+        ),
+      ],
     );
   }
 
@@ -127,7 +139,8 @@ class _GameScreenState extends State<GameScreen> {
         const SizedBox(height: 40,),
         const BoldText('BANK PAPER', fontSize: 16,),
         const SizedBox(height: 10,),
-        HostPaperWidget(hostCards: notifier.cards, color: notifier.cards.first.color,)
+        HostPaperWidget(hostCards: notifier.cards, color: notifier.cards.first.color,),
+        const SizedBox(height: 40,),
       ],
     );
   }
