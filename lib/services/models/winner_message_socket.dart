@@ -16,7 +16,7 @@ class WinnerMessageSocket {
 
 enum WinTypeEnum{
   AMBO,
-  TERNO,
+  TERNA,
   QUATERNA,
   CINQUINA,
   TOMBOLA,

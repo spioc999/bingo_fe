@@ -18,14 +18,31 @@ class GameScreen extends StatefulWidget {
   _GameScreenState createState() => _GameScreenState();
 }
 
-class _GameScreenState extends State<GameScreen> {
+class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addObserver(this);
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       Provider.of<GameNotifier>(context, listen: false).init();
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
+      Provider.of<GameNotifier>(context, listen: false).leaveRoomSocket();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -88,24 +105,28 @@ class _GameScreenState extends State<GameScreen> {
               RomanText('${notifier.nickname}${notifier.isHost ? ' (HOST)' : ''}', color: Colors.black87,),
               const Spacer(),
               Visibility(
-                  visible: notifier.isHost,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      RomanText(notifier.numberUsersConnected.toString(), color: Colors.black87,),
-                      const SizedBox(width: 5,),
-                      Container(
-                          width: 7,
-                          height: 7,
-                          decoration: const BoxDecoration(
-                            color: Colors.green,
-                            shape: BoxShape.circle, //TODO
-                          )
-                      ),
-                      const SizedBox(width: 5,),
-                    ],
+                visible: notifier.winners.isNotEmpty,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  child: const RomanText(
+                    'WINNERS',
+                    decoration: TextDecoration.underline,
+                  ),
+                  onTap: () => notifier.openWinners(),
+                ),
+              ),
+              const SizedBox(height: 10, child: VerticalDivider(color: Colors.black45,)),
+              RomanText(notifier.numberUsersConnected.toString(), color: Colors.black87,),
+              const SizedBox(width: 5,),
+              Container(
+                  width: 7,
+                  height: 7,
+                  decoration: const BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
                   )
-              )
+              ),
+              const SizedBox(width: 5,),
             ],
           ),
         ),

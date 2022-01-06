@@ -6,6 +6,7 @@ import 'package:bingo_fe/services/models/bingo_paper.dart';
 import 'package:bingo_fe/services/models/create_room_response.dart';
 import 'package:bingo_fe/services/models/joined_room_response.dart';
 import 'package:bingo_fe/services/models/user_cards.dart';
+import 'package:bingo_fe/services/models/winners_response.dart';
 import 'package:bingo_fe/services/service_response.dart';
 import 'package:get_it/get_it.dart';
 
@@ -32,6 +33,27 @@ mixin ServiceMixin on BaseNotifier {
   Future<ServiceResponse<String>> extractNumber(String roomCode, String hostUniqueCode, {bool isSilent = false}) async {
     if(!isSilent) showLoading();
     ServiceResponse<String> response = await apiService.extractNumber(roomCode, hostUniqueCode, cancelToken: cancelToken);
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
+  Future<ServiceResponse<int>> getLastExtractedNumber(String roomCode, {bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse<int> response = await apiService.getLastExtractedNumber(roomCode, cancelToken: cancelToken);
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
+  Future<ServiceResponse<int>> getOnlinePlayersRoom(String roomCode, {bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse<int> response = await apiService.getOnlinePlayersRoom(roomCode, cancelToken: cancelToken);
+    if(!isSilent) hideLoading();
+    return response;
+  }
+
+  Future<ServiceResponse<WinnersResponse>> getWinnersOfRoom(String roomCode, {bool isSilent = false}) async {
+    if(!isSilent) showLoading();
+    ServiceResponse<WinnersResponse> response = await apiService.getWinnersOfRoom(roomCode, cancelToken: cancelToken);
     if(!isSilent) hideLoading();
     return response;
   }

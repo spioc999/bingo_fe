@@ -7,6 +7,7 @@ import 'package:bingo_fe/services/models/create_room_response.dart';
 import 'package:bingo_fe/services/models/joined_room_response.dart';
 import 'package:bingo_fe/services/models/next_bingo_paper_request.dart';
 import 'package:bingo_fe/services/models/user_cards.dart';
+import 'package:bingo_fe/services/models/winners_response.dart';
 import 'package:bingo_fe/services/service_response.dart';
 import 'package:dio/dio.dart';
 
@@ -57,6 +58,57 @@ class ApiService{
       response.result = await client.makePost<String>("/room/extract/$roomCode/$hostUniqueCode",
           cancelToken: cancelToken,
           converter: (data) => data);
+
+    } on DioError catch (e) {
+      response.error = ServiceError(e.response?.statusCode ?? _genericError.errorCode, e.response?.data ?? e.response?.statusMessage ?? _genericError.errorMessage);
+    }catch(e) {
+      response.error = _genericError;
+    }
+
+    return response;
+  }
+
+  Future<ServiceResponse<int>> getLastExtractedNumber(String roomCode, {CancelToken? cancelToken}) async {
+    ServiceResponse<int> response = ServiceResponse();
+
+    try{
+      response.result = await client.makeGet<int>("/room/last_extracted_number/$roomCode",
+          cancelToken: cancelToken,
+          converter: (data) => int.tryParse(data) ?? 0);
+
+    } on DioError catch (e) {
+      response.error = ServiceError(e.response?.statusCode ?? _genericError.errorCode, e.response?.data ?? e.response?.statusMessage ?? _genericError.errorMessage);
+    }catch(e) {
+      response.error = _genericError;
+    }
+
+    return response;
+  }
+
+  Future<ServiceResponse<int>> getOnlinePlayersRoom(String roomCode, {CancelToken? cancelToken}) async {
+    ServiceResponse<int> response = ServiceResponse();
+
+    try{
+      response.result = await client.makeGet<int>("/room/online_players/$roomCode",
+          cancelToken: cancelToken,
+          converter: (data) => int.tryParse(data) ?? 0);
+
+    } on DioError catch (e) {
+      response.error = ServiceError(e.response?.statusCode ?? _genericError.errorCode, e.response?.data ?? e.response?.statusMessage ?? _genericError.errorMessage);
+    }catch(e) {
+      response.error = _genericError;
+    }
+
+    return response;
+  }
+
+  Future<ServiceResponse<WinnersResponse>> getWinnersOfRoom(String roomCode, {CancelToken? cancelToken}) async {
+    ServiceResponse<WinnersResponse> response = ServiceResponse();
+
+    try{
+      response.result = await client.makeGet<WinnersResponse>("/room/winners/$roomCode",
+          cancelToken: cancelToken,
+          converter: (data) => WinnersResponse.fromJson(data));
 
     } on DioError catch (e) {
       response.error = ServiceError(e.response?.statusCode ?? _genericError.errorCode, e.response?.data ?? e.response?.statusMessage ?? _genericError.errorMessage);

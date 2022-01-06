@@ -79,7 +79,7 @@ class HostPaperWidget extends StatelessWidget {
                         horizontal: (number ?? 0) < 10 ? 5 : 3.5
                     ),
                     decoration: BoxDecoration(
-                      color: extracted ? color : Colors.white,
+                      color: extracted ? color.withOpacity(0.7) : Colors.white,
                       shape: BoxShape.circle,
                     ),
                     child: RomanText(

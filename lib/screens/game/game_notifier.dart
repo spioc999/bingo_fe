@@ -3,6 +3,7 @@ import 'package:bingo_fe/mixins/mixin_service.dart';
 import 'package:bingo_fe/models/card_model.dart';
 import 'package:bingo_fe/navigation/mixin_route.dart';
 import 'package:bingo_fe/navigation/routes.dart';
+import 'package:bingo_fe/screens/bottom_sheets/winners_bottom_sheet.dart';
 import 'package:bingo_fe/services/models/extract_number_message_socket.dart';
 import 'package:bingo_fe/services/models/message_socket.dart';
 import 'package:bingo_fe/services/models/update_user_message_socket.dart';
@@ -19,6 +20,8 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   String? _hostUniqueCode;
   List<CardModel> cards = [];
   IO.Socket? socket;
+  int? _numberOfUserConnected;
+  Map<WinTypeEnum, List<String>> winners = {};
 
   GameNotifier(this.cards);
 
@@ -29,6 +32,8 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
     _roomCode = roomInfoResponse.result?.roomCode;
     _roomName = roomInfoResponse.result?.roomName;
     _hostUniqueCode = roomInfoResponse.result?.hostUniqueCode;
+    _getLastExtractedNumber();
+    _getWinnersOfRoom();
     _addListenersSocketAndJoin();
     notifyListeners();
   }
@@ -47,6 +52,14 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
       _lastExtractedNumber = int.tryParse(response.result ?? '');
       await _refreshCards();
       hideLoading();
+    }
+  }
+
+  _getLastExtractedNumber() async {
+    final lastExtractedByRoomResponse = await getLastExtractedNumber(roomCode, isSilent: true);
+    if(lastExtractedByRoomResponse.result != null && lastExtractedByRoomResponse.result! > 0){
+      _lastExtractedNumber = lastExtractedByRoomResponse.result;
+      notifyListeners();
     }
   }
 
@@ -80,6 +93,12 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   void _onRoomServiceMessages(dynamic data){
     final message = MessageSocket.fromJson(data);
     showMessage(message.msg ?? '');
+    _updateNumberUserConnected();
+  }
+
+  void _updateNumberUserConnected() async{
+    _numberOfUserConnected = (await getOnlinePlayersRoom(_roomCode ?? '', isSilent: true)).result;
+    notifyListeners();
   }
 
   void _onExtractedNumber(dynamic data){
@@ -98,7 +117,9 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
       isBold: message.userNickname == _nickname
     );
     if(message.winType == WinTypeEnum.TOMBOLA){
-      //TODO navigate to summary
+      navigateTo(RouteEnum.summary, shouldClearAll: true);
+    }else{
+      _getWinnersOfRoom();
     }
   }
 
@@ -110,15 +131,32 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
     }
   }
 
+  void openWinners(){
+    navigateToBottomSheet(WinnersBottomSheet(winners: winners));
+  }
+
+  void _getWinnersOfRoom() async {
+    final response = await getWinnersOfRoom(roomCode, isSilent: true);
+    if(!response.hasError){
+      winners = response.result?.winners ?? {};
+      notifyListeners();
+    }
+  }
+
   void leaveGame() {
-    SocketHelper.leaveRoomSocket(socket);
+    leaveRoomSocket();
     saveRoomInfo(null, isSilent: true);
+    saveIsHost(false);
     navigateTo(RouteEnum.home, shouldClearAll: true);
+  }
+
+  leaveRoomSocket(){
+    SocketHelper.leaveRoomSocket(socket);
   }
 
   @override
   void dispose() {
-    socket?.disconnect();
+    leaveRoomSocket();
     socket?.dispose();
     super.dispose();
   }
@@ -128,7 +166,5 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   String get roomCode => _roomCode ?? '';
   String get nickname => _nickname ?? '';
   int? get lastExtractedNumber => _lastExtractedNumber;
-  int get numberUsersConnected => 3; //TODO
-
-
+  int get numberUsersConnected => _numberOfUserConnected ?? 0;
 }

@@ -7,6 +7,8 @@ import 'package:bingo_fe/screens/select_cards/select_cards_notifier.dart';
 import 'package:bingo_fe/screens/select_cards/select_cards_screen.dart';
 import 'package:bingo_fe/screens/splash/splash_notifier.dart';
 import 'package:bingo_fe/screens/splash/splash_screen.dart';
+import 'package:bingo_fe/screens/summary/summary_notifier.dart';
+import 'package:bingo_fe/screens/summary/summary_screen.dart';
 import 'package:bingo_fe/services/models/bingo_paper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,8 +51,10 @@ class Routes {
       );
     },
 
-    //TODO summary
-
+    RouteEnum.summary.name! : (context) => ChangeNotifierProvider(
+        create: (_) => SummaryNotifier(),
+        child: const SummaryScreen(),
+    ),
   };
 }
 

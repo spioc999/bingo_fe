@@ -66,7 +66,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 40,),
             ScrollingExpandedWidget(
-              child: _buildForm(notifier)
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
+                child: _buildForm(notifier)
+              )
             )
           ],
         )

@@ -47,7 +47,7 @@ class CardWidget extends StatelessWidget {
                                 horizontal: (number ?? 0) < 10 ? 5 : 3.5
                               ),
                               decoration: BoxDecoration(
-                                color: extracted ? cardModel.color : Colors.white,
+                                color: extracted ? cardModel.color.withOpacity(0.7) : Colors.white,
                                 shape: BoxShape.circle,
                               ),
                               child: RomanText(
