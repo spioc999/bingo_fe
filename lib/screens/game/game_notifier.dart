@@ -23,17 +23,19 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   int? _numberOfUserConnected;
   Map<WinTypeEnum, List<String>> winners = {};
   bool _hasTappedExtract = false;
+  bool _tombolaWon = false;
 
   GameNotifier(this.cards);
 
   init() async{
     showLoading();
-    _isHost = (await isHostUser()).result ?? false;
-    _nickname = (await getNickname()).result;
-    final roomInfoResponse = await getRoomInfo();
+    _isHost = (await isHostUser(isSilent: true)).result ?? false;
+    _nickname = (await getNickname(isSilent: true)).result;
+    final roomInfoResponse = await getRoomInfo(isSilent: true);
     _roomCode = roomInfoResponse.result?.roomCode;
     _roomName = roomInfoResponse.result?.roomName;
     _hostUniqueCode = roomInfoResponse.result?.hostUniqueCode;
+    notifyListeners();
     _addListenersSocketAndJoin();
     await _getLastExtractedNumber();
     await _getWinnersOfRoom();
@@ -41,12 +43,12 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   }
 
   onTapExtractNumber() async{
-    if(_isHost && _roomCode != null && _hostUniqueCode != null){
+    if(_isHost && _roomCode != null && _hostUniqueCode != null && !_tombolaWon){
       _hasTappedExtract = true;
       showLoading();
       final response = await extractNumber(_roomCode!, _hostUniqueCode!, isSilent: true);
 
-      if(response.hasError){
+      if(response.hasError && !_tombolaWon){
         _hasTappedExtract = false;
         hideLoading();
         showMessage(response.error!.errorMessage, messageType: MessageTypeEnum.error);
@@ -70,7 +72,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
 
   Future<void> _refreshCards() async{
     final response = await getUserCards(roomCode, nickname, isSilent: true);
-    if(response.hasError){
+    if(response.hasError && !_tombolaWon){
       hideLoading();
       showMessage(response.error!.errorMessage, messageType: MessageTypeEnum.error);
       return;
@@ -122,6 +124,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
       isBold: message.userNickname == _nickname
     );
     if(message.winType == WinTypeEnum.TOMBOLA){
+      _tombolaWon = true;
       navigateTo(RouteEnum.summary, shouldClearAll: true);
     }else{
       _getWinnersOfRoom();

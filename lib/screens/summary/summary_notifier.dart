@@ -20,11 +20,12 @@ class SummaryNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
 
   init() async{
     showLoading();
-    _isHost = (await isHostUser()).result ?? false;
-    _nickname = (await getNickname()).result;
-    final roomInfoResponse = await getRoomInfo();
+    _isHost = (await isHostUser(isSilent: true)).result ?? false;
+    _nickname = (await getNickname(isSilent: true)).result;
+    final roomInfoResponse = await getRoomInfo(isSilent: true);
     _roomCode = roomInfoResponse.result?.roomCode;
     _roomName = roomInfoResponse.result?.roomName;
+    notifyListeners();
     await _getWinnersOfRoom();
     hideLoading();
   }

@@ -27,16 +27,16 @@ class YesNoBottomSheet extends StatelessWidget with RouteMixin{
   }
 
   _buildChild(String title, BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
-      child: TopRoundedContainer(
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 20,
-              right: 20,
-              top: MediaQuery.of(context).size.height / 25,
-              bottom: MediaQuery.of(context).size.height / 25,
-            ),
+    return TopRoundedContainer(
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: MediaQuery.of(context).size.height / 25,
+            bottom: MediaQuery.of(context).size.height / 25,
+          ),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -68,8 +68,8 @@ class YesNoBottomSheet extends StatelessWidget with RouteMixin{
                 ),
               ],
             ),
-          )
-      ),
+          ),
+        )
     );
   }
 }

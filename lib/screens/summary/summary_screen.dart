@@ -79,7 +79,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
           ),
         ),
         const SizedBox(height: 50,),
-        notifier.isLoading ? const CircularProgressIndicator() :
+        notifier.isLoading ? const Center(child: CircularProgressIndicator(),) :
         ScrollingExpandedWidget(
             child: SizedBox(
               width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
