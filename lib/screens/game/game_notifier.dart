@@ -22,28 +22,32 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   IO.Socket? socket;
   int? _numberOfUserConnected;
   Map<WinTypeEnum, List<String>> winners = {};
+  bool _hasTappedExtract = false;
 
   GameNotifier(this.cards);
 
   init() async{
+    showLoading();
     _isHost = (await isHostUser()).result ?? false;
     _nickname = (await getNickname()).result;
     final roomInfoResponse = await getRoomInfo();
     _roomCode = roomInfoResponse.result?.roomCode;
     _roomName = roomInfoResponse.result?.roomName;
     _hostUniqueCode = roomInfoResponse.result?.hostUniqueCode;
-    _getLastExtractedNumber();
-    _getWinnersOfRoom();
     _addListenersSocketAndJoin();
-    notifyListeners();
+    await _getLastExtractedNumber();
+    await _getWinnersOfRoom();
+    hideLoading();
   }
 
   onTapExtractNumber() async{
     if(_isHost && _roomCode != null && _hostUniqueCode != null){
+      _hasTappedExtract = true;
       showLoading();
       final response = await extractNumber(_roomCode!, _hostUniqueCode!, isSilent: true);
 
       if(response.hasError){
+        _hasTappedExtract = false;
         hideLoading();
         showMessage(response.error!.errorMessage, messageType: MessageTypeEnum.error);
         return;
@@ -51,11 +55,12 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
 
       _lastExtractedNumber = int.tryParse(response.result ?? '');
       await _refreshCards();
+      _hasTappedExtract = false;
       hideLoading();
     }
   }
 
-  _getLastExtractedNumber() async {
+  Future<void> _getLastExtractedNumber() async {
     final lastExtractedByRoomResponse = await getLastExtractedNumber(roomCode, isSilent: true);
     if(lastExtractedByRoomResponse.result != null && lastExtractedByRoomResponse.result! > 0){
       _lastExtractedNumber = lastExtractedByRoomResponse.result;
@@ -132,10 +137,10 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   }
 
   void openWinners(){
-    navigateToBottomSheet(WinnersBottomSheet(winners: winners));
+    navigateToBottomSheet(WinnersBottomSheet(winners: winners, userNickname: nickname,));
   }
 
-  void _getWinnersOfRoom() async {
+  Future<void> _getWinnersOfRoom() async {
     final response = await getWinnersOfRoom(roomCode, isSilent: true);
     if(!response.hasError){
       winners = response.result?.winners ?? {};
@@ -146,7 +151,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   void leaveGame() {
     leaveRoomSocket();
     saveRoomInfo(null, isSilent: true);
-    saveIsHost(false);
+    saveIsHost(false, isSilent: true);
     navigateTo(RouteEnum.home, shouldClearAll: true);
   }
 
@@ -167,4 +172,5 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   String get nickname => _nickname ?? '';
   int? get lastExtractedNumber => _lastExtractedNumber;
   int get numberUsersConnected => _numberOfUserConnected ?? 0;
+  bool get isLoadingExtract => isLoading && _hasTappedExtract;
 }

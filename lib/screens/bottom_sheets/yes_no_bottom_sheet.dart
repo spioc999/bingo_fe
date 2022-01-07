@@ -27,46 +27,49 @@ class YesNoBottomSheet extends StatelessWidget with RouteMixin{
   }
 
   _buildChild(String title, BuildContext context) {
-    return TopRoundedContainer(
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: MediaQuery.of(context).size.height / 25,
-            bottom: MediaQuery.of(context).size.height / 25,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RomanText(
-                title, textAlign: TextAlign.center, fontSize: 16, maxLines: 6,
-              ),
-              const SizedBox(height: 20,),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Flexible(
-                    child: AppOutlinedButton(
-                      text: 'no',
-                      onTap: () {
-                        pop(false);
-                      },
+    return SizedBox(
+      width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
+      child: TopRoundedContainer(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: MediaQuery.of(context).size.height / 25,
+              bottom: MediaQuery.of(context).size.height / 25,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                RomanText(
+                  title, textAlign: TextAlign.center, fontSize: 16, maxLines: 6,
+                ),
+                const SizedBox(height: 20,),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Flexible(
+                      child: AppOutlinedButton(
+                        text: 'no',
+                        onTap: () {
+                          pop(false);
+                        },
+                      ),
                     ),
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width / 22,),
-                  Flexible(
-                    child: AppButton(
-                      text: 'yes',
-                      onTap: () {
-                        pop(true);
-                      },
+                    SizedBox(width: MediaQuery.of(context).size.width / 22,),
+                    Flexible(
+                      child: AppButton(
+                        text: 'yes',
+                        onTap: () {
+                          pop(true);
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        )
+                  ],
+                ),
+              ],
+            ),
+          )
+      ),
     );
   }
 }

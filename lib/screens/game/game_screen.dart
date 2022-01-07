@@ -1,7 +1,6 @@
 import 'package:bingo_fe/base/base_widget.dart';
 import 'package:bingo_fe/screens/game/game_notifier.dart';
 import 'package:bingo_fe/widget/buttons/app_button.dart';
-import 'package:bingo_fe/widget/buttons/app_outlined_button.dart';
 import 'package:bingo_fe/widget/card_widget.dart';
 import 'package:bingo_fe/widget/common/scrolling_expanded_widget.dart';
 import 'package:bingo_fe/widget/host_paper_widget.dart';
@@ -33,8 +32,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.detached) {
+    if (state == AppLifecycleState.detached) {
       Provider.of<GameNotifier>(context, listen: false).leaveRoomSocket();
     }
   }
@@ -51,13 +49,16 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
       builder: (_, notifier, __) => BaseWidget(
         overlayStyle: SystemUiOverlayStyle.dark,
         safeAreaBottom: true,
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.grey.shade400,
-          onPressed: () => notifier.leaveGame(),
-          child: const Icon(
-            Icons.exit_to_app_outlined,
-            color: Colors.black,
-            size: 25,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: FloatingActionButton(
+            backgroundColor: Colors.grey.shade400,
+            onPressed: () => notifier.leaveGame(),
+            child: const Icon(
+              Icons.exit_to_app_outlined,
+              color: Colors.black,
+              size: 25,
+            ),
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
@@ -94,45 +95,52 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
           ),
         ),
         const SizedBox(height: 20,),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const Icon(Icons.account_circle_outlined, color: Colors.grey,),
-              const SizedBox(width: 10,),
-              RomanText('${notifier.nickname}${notifier.isHost ? ' (HOST)' : ''}', color: Colors.black87,),
-              const Spacer(),
-              Visibility(
-                visible: notifier.winners.isNotEmpty,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  child: const RomanText(
-                    'WINNERS',
-                    decoration: TextDecoration.underline,
+        SizedBox(
+          width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Icon(Icons.account_circle_outlined, color: Colors.grey,),
+                const SizedBox(width: 10,),
+                RomanText('${notifier.nickname}${notifier.isHost ? ' (HOST)' : ''}', color: Colors.black87,),
+                const Spacer(),
+                Visibility(
+                  visible: notifier.winners.isNotEmpty,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    child: const RomanText(
+                      'WINNERS',
+                      decoration: TextDecoration.underline,
+                    ),
+                    onTap: () => notifier.openWinners(),
                   ),
-                  onTap: () => notifier.openWinners(),
                 ),
-              ),
-              const SizedBox(height: 10, child: VerticalDivider(color: Colors.black45,)),
-              RomanText(notifier.numberUsersConnected.toString(), color: Colors.black87,),
-              const SizedBox(width: 5,),
-              Container(
-                  width: 7,
-                  height: 7,
-                  decoration: const BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
-                  )
-              ),
-              const SizedBox(width: 5,),
-            ],
+                const SizedBox(height: 10, child: VerticalDivider(color: Colors.black45,)),
+                RomanText(notifier.numberUsersConnected.toString(), color: Colors.black87,),
+                const SizedBox(width: 5,),
+                Container(
+                    width: 7,
+                    height: 7,
+                    decoration: const BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    )
+                ),
+                const SizedBox(width: 5,),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 30,),
+        notifier.isLoading && !notifier.isLoadingExtract ? const CircularProgressIndicator() :
         ScrollingExpandedWidget(
-            child: notifier.isHost ? _buildHostPaper(notifier) : _buildPlayerCards(notifier)
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
+              child: notifier.isHost ? _buildHostPaper(notifier) : _buildPlayerCards(notifier),
+            )
         ),
       ],
     );
@@ -150,18 +158,18 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
               const RomanText('Last extracted number: ', fontSize: 15,),
               BoldText(notifier.lastExtractedNumber.toString(), fontSize: 17,),
               const SizedBox(width: 30,),
-              Expanded(child: AppButton(text: 'EXTRACT', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoading,))
+              Expanded(child: AppButton(text: 'EXTRACT', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoadingExtract,))
             ],
           ) : Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: AppButton(icon: Icons.play_circle_outline,text: 'START GAME', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoading,),
+            child: AppButton(icon: Icons.play_circle_outline,text: 'START GAME', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoadingExtract,),
           ),
         ),
         const SizedBox(height: 40,),
         const BoldText('BANK PAPER', fontSize: 16,),
         const SizedBox(height: 10,),
         HostPaperWidget(hostCards: notifier.cards, color: notifier.cards.first.color,),
-        const SizedBox(height: 40,),
+        SizedBox(height: 50, width: MediaQuery.of(context).size.width),
       ],
     );
   }

@@ -24,7 +24,6 @@ class SplashNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
 
       if (!userCards.hasError
           && (userCards.result?.cards?.isNotEmpty ?? false)
-          && !winnersResponse.hasError
           && (winnersResponse.result?.winners?[WinTypeEnum.TOMBOLA]?.isEmpty ?? true)){
         hideLoading();
         final continueLastRoom = await navigateToBottomSheet(
@@ -40,6 +39,9 @@ class SplashNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
           var cards = userCards.result?.cards?.map((c) => CardModel.fromBingoCard(c)).toList() ?? [];
           navigateTo(RouteEnum.game, shouldReplace: true, arguments: cards);
           return;
+        }else if (continueLastRoom != null && continueLastRoom is bool && !continueLastRoom){
+          await saveRoomInfo(null, isSilent: true);
+          await saveIsHost(false, isSilent: true);
         }
       }
     }

@@ -22,3 +22,22 @@ enum WinTypeEnum{
   TOMBOLA,
   NONE
 }
+
+extension WinTypeEnumExtension on WinTypeEnum {
+  int get number {
+    switch(this){
+      case WinTypeEnum.AMBO:
+        return 2;
+      case WinTypeEnum.TERNA:
+        return 3;
+      case WinTypeEnum.QUATERNA:
+        return 4;
+      case WinTypeEnum.CINQUINA:
+        return 5;
+      case WinTypeEnum.TOMBOLA:
+        return 15;
+      case WinTypeEnum.NONE:
+        return 0;
+    }
+  }
+}
