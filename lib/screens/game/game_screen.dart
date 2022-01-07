@@ -135,7 +135,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
           ),
         ),
         const SizedBox(height: 30,),
-        notifier.isLoading && !notifier.isLoadingExtract ? const CircularProgressIndicator() :
+        notifier.isLoading && !notifier.isLoadingExtract ? const Center(child: CircularProgressIndicator()) :
         ScrollingExpandedWidget(
             child: SizedBox(
               width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,

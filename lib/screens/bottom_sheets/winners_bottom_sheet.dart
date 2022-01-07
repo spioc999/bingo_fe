@@ -15,16 +15,16 @@ class WinnersBottomSheet extends StatelessWidget with RouteMixin{
   @override
   Widget build(BuildContext context) {
     final sortedKeys = winners.keys.toList()..sort((a, b) => a.number.compareTo(b.number));
-    return SizedBox(
-      width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
-      child: TopRoundedContainer(
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 20,
-              right: 20,
-              top: MediaQuery.of(context).size.height / 25,
-              bottom: MediaQuery.of(context).size.height / 20,
-            ),
+    return TopRoundedContainer(
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: MediaQuery.of(context).size.height / 25,
+            bottom: MediaQuery.of(context).size.height / 20,
+          ),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -77,8 +77,8 @@ class WinnersBottomSheet extends StatelessWidget with RouteMixin{
                 )
               ],
             ),
-          )
-      ),
+          ),
+        )
     );
   }
 }

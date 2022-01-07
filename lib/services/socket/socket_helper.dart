@@ -1,13 +1,22 @@
+import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketHelper {
 
   static Socket createAndConnectSocket(String url){
-    final socket = IO.io(url, <String, dynamic> {
-      'transports' : ['websocket'],
-      'autoConnect' : false
-    });
+    final Map<String, dynamic> opts;
+    if(kIsWeb){
+      opts = <String, dynamic> {
+        'autoConnect' : false
+      };
+    }else{
+      opts = <String, dynamic> {
+        'transports' : ['websocket'],
+        'autoConnect' : false
+      };
+    }
+    final socket = IO.io(url, opts);
     socket.connect();
     return socket;
   }
