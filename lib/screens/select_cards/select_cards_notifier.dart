@@ -58,7 +58,7 @@ class SelectCardsNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
     _hasTappedLoadMore = false;
 
     if(response.hasError){
-      showMessage(response.error!.errorMessage, isError: true);
+      showMessage(response.error!.errorMessage, messageType: MessageTypeEnum.error);
       return;
     }
 
@@ -73,7 +73,7 @@ class SelectCardsNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
     final response = await assignCardsToUser(roomCode, nickname, selectedCards);
     _hasTappedNext = false;
     if(response.hasError){
-      showMessage(response.error!.errorMessage, isError: true);
+      showMessage(response.error!.errorMessage, messageType: MessageTypeEnum.error);
       return;
     }
     navigateTo(RouteEnum.game, shouldReplace: true, arguments: _cards.where((c) => _selectedCards.contains(c.id)).toList());

@@ -3,6 +3,7 @@ import 'bingo_card.dart';
 class BingoPaper{
   String? bingoPaperId;
   List<BingoCard>? cards;
+  String? color;
   int? numberOfCards;
 
   BingoPaper({this.bingoPaperId, this.cards, this.numberOfCards});
@@ -16,6 +17,7 @@ class BingoPaper{
       });
     }
     numberOfCards = json['number_of_cards'];
+    color = json['color'];
   }
 
   Map<String, dynamic> toJson() {
@@ -25,6 +27,7 @@ class BingoPaper{
       data['cardDTOs'] = cards!.map((c) => c.toJson()).toList();
     }
     data['number_of_cards'] = numberOfCards;
+    data['color'] = color;
     return data;
   }
 }

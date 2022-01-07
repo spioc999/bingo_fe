@@ -50,7 +50,7 @@ class HomeNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
     if(response.hasError){
       _hasTappedConnect = false;
       hideLoading();
-      showMessage(response.error!.errorMessage, isError: true);
+      showMessage(response.error!.errorMessage, messageType: MessageTypeEnum.error);
       return;
     }
     await saveIsHost(false);
@@ -68,7 +68,7 @@ class HomeNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
     if(response.hasError){
       _hasTappedStart = false;
       hideLoading();
-      showMessage(response.error!.errorMessage, isError: true);
+      showMessage(response.error!.errorMessage, messageType: MessageTypeEnum.error);
       return;
     }
     await saveIsHost(response.result?.hostUniqueCode != null);

@@ -33,22 +33,25 @@ class _SelectCardsScreenState extends State<SelectCardsScreen> {
       builder: (_, notifier, __) => BaseWidget(
         overlayStyle: SystemUiOverlayStyle.dark,
         safeAreaBottom: true,
-        floatingActionButton: Badge(
-          badgeColor: Colors.black,
-          badgeContent: RomanText('${notifier.selectedCards.length}', fontSize: 14, color: Colors.white,),
-          showBadge: true,
-          position: BadgePosition.topEnd(top: -1, end: -1),
-          child: FloatingActionButton(
-            backgroundColor: notifier.selectedCards.isNotEmpty ? Colors.red : Colors.red.shade200,
-            onPressed: notifier.selectedCards.isNotEmpty && !notifier.nextLoading ? () => notifier.onTapNext() : () {},
-            child: notifier.nextLoading ? const SizedBox(
-              height: 26,
-              width: 26,
-              child: CircularProgressIndicator(color: Colors.black,),
-            ) : Icon(
-              Icons.navigate_next_outlined,
-              color: notifier.selectedCards.isNotEmpty ? Colors.black : Colors.black45,
-              size: 35,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Badge(
+            badgeColor: Colors.black,
+            badgeContent: RomanText('${notifier.selectedCards.length}', fontSize: 14, color: Colors.white,),
+            showBadge: true,
+            position: BadgePosition.topEnd(top: -1, end: -1),
+            child: FloatingActionButton(
+              backgroundColor: notifier.selectedCards.isNotEmpty ? Colors.red : Colors.red.shade200,
+              onPressed: notifier.selectedCards.isNotEmpty && !notifier.nextLoading ? () => notifier.onTapNext() : () {},
+              child: notifier.nextLoading ? const SizedBox(
+                height: 26,
+                width: 26,
+                child: CircularProgressIndicator(color: Colors.black,),
+              ) : Icon(
+                Icons.navigate_next_outlined,
+                color: notifier.selectedCards.isNotEmpty ? Colors.black : Colors.black45,
+                size: 35,
+              ),
             ),
           ),
         ),
@@ -86,32 +89,41 @@ class _SelectCardsScreenState extends State<SelectCardsScreen> {
           ),
         ),
         const SizedBox(height: 20,),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const Icon(Icons.account_circle_outlined, color: Colors.grey,),
-              const SizedBox(width: 10,),
-              RomanText(notifier.nickname, color: Colors.black87,),
-            ],
+        SizedBox(
+          width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Icon(Icons.account_circle_outlined, color: Colors.grey,),
+                const SizedBox(width: 10,),
+                RomanText(notifier.nickname, color: Colors.black87,),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 20,),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: const [
-              Expanded(child: RomanText('Select the cards you prefer and then press on NEXT button.', color: Colors.black87, maxLines: 4,)),
-            ],
+        SizedBox(
+          width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: const [
+                Expanded(child: RomanText('Select the cards you prefer and then press on NEXT button.', color: Colors.black87, maxLines: 4,)),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 20,),
         ScrollingExpandedWidget(
-            child: _buildCards(notifier)
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
+              child: _buildCards(notifier),
+            )
         ),
         const SizedBox(height: 40,),
       ],

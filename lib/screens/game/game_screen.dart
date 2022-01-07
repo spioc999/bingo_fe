@@ -17,54 +17,87 @@ class GameScreen extends StatefulWidget {
   _GameScreenState createState() => _GameScreenState();
 }
 
-class _GameScreenState extends State<GameScreen> {
+class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addObserver(this);
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       Provider.of<GameNotifier>(context, listen: false).init();
     });
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.detached) {
+      Provider.of<GameNotifier>(context, listen: false).leaveRoomSocket();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BaseWidget(
-      overlayStyle: SystemUiOverlayStyle.dark,
-      child: _buildChild(context),
+    return Consumer<GameNotifier>(
+      builder: (_, notifier, __) => BaseWidget(
+        overlayStyle: SystemUiOverlayStyle.dark,
+        safeAreaBottom: true,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: FloatingActionButton(
+            backgroundColor: Colors.grey.shade400,
+            onPressed: () => notifier.leaveGame(),
+            child: const Icon(
+              Icons.exit_to_app_outlined,
+              color: Colors.black,
+              size: 25,
+            ),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        child: _buildChild(context, notifier),
+      )
     );
   }
 
-  _buildChild(BuildContext context) {
-    return Consumer<GameNotifier>(
-      builder: (_, notifier, __) => Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [
-                    Colors.red,
-                    Colors.red.withOpacity(0.8)
-                  ]
-              ),
-              borderRadius: const BorderRadius.only(
-                  bottomRight: Radius.circular(25.0)),
+  _buildChild(BuildContext context, GameNotifier notifier) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [
+                  Colors.red,
+                  Colors.red.withOpacity(0.8)
+                ]
             ),
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 10 + MediaQuery.of(context).viewPadding.top,),
-                BoldText(notifier.roomName, fontSize: 26),
-                const SizedBox(height: 8,),
-                BoldText('Room code: ${notifier.roomCode}', fontSize: 14),
-                const SizedBox(height: 15,),
-              ],
-            ),
+            borderRadius: const BorderRadius.only(
+                bottomRight: Radius.circular(25.0)),
           ),
-          const SizedBox(height: 20,),
-          Padding(
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 10 + MediaQuery.of(context).viewPadding.top,),
+              BoldText(notifier.roomName, fontSize: 26),
+              const SizedBox(height: 8,),
+              BoldText('Room code: ${notifier.roomCode}', fontSize: 14),
+              const SizedBox(height: 15,),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20,),
+        SizedBox(
+          width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
+          child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               mainAxisSize: MainAxisSize.max,
@@ -75,33 +108,41 @@ class _GameScreenState extends State<GameScreen> {
                 RomanText('${notifier.nickname}${notifier.isHost ? ' (HOST)' : ''}', color: Colors.black87,),
                 const Spacer(),
                 Visibility(
-                  visible: notifier.isHost,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      RomanText(notifier.numberUsersConnected.toString(), color: Colors.black87,),
-                      const SizedBox(width: 5,),
-                      Container(
-                        width: 7,
-                        height: 7,
-                        decoration: const BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle, //TODO
-                        )
-                      ),
-                      const SizedBox(width: 5,),
-                    ],
-                  )
-                )
+                  visible: notifier.winners.isNotEmpty,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    child: const RomanText(
+                      'WINNERS',
+                      decoration: TextDecoration.underline,
+                    ),
+                    onTap: () => notifier.openWinners(),
+                  ),
+                ),
+                const SizedBox(height: 10, child: VerticalDivider(color: Colors.black45,)),
+                RomanText(notifier.numberUsersConnected.toString(), color: Colors.black87,),
+                const SizedBox(width: 5,),
+                Container(
+                    width: 7,
+                    height: 7,
+                    decoration: const BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    )
+                ),
+                const SizedBox(width: 5,),
               ],
             ),
           ),
-          const SizedBox(height: 30,),
-          ScrollingExpandedWidget(
-            child: notifier.isHost ? _buildHostPaper(notifier) : _buildPlayerCards(notifier)
-          ),
-        ],
-      )
+        ),
+        const SizedBox(height: 30,),
+        notifier.isLoading && !notifier.isLoadingExtract ? const CircularProgressIndicator() :
+        ScrollingExpandedWidget(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
+              child: notifier.isHost ? _buildHostPaper(notifier) : _buildPlayerCards(notifier),
+            )
+        ),
+      ],
     );
   }
 
@@ -117,17 +158,18 @@ class _GameScreenState extends State<GameScreen> {
               const RomanText('Last extracted number: ', fontSize: 15,),
               BoldText(notifier.lastExtractedNumber.toString(), fontSize: 17,),
               const SizedBox(width: 30,),
-              Expanded(child: AppButton(text: 'EXTRACT', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoading,))
+              Expanded(child: AppButton(text: 'EXTRACT', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoadingExtract,))
             ],
           ) : Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: AppButton(icon: Icons.play_circle_outline,text: 'START GAME', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoading,),
+            child: AppButton(icon: Icons.play_circle_outline,text: 'START GAME', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoadingExtract,),
           ),
         ),
         const SizedBox(height: 40,),
         const BoldText('BANK PAPER', fontSize: 16,),
         const SizedBox(height: 10,),
-        HostPaperWidget(hostCards: notifier.cards,)
+        HostPaperWidget(hostCards: notifier.cards, color: notifier.cards.first.color,),
+        SizedBox(height: 50, width: MediaQuery.of(context).size.width),
       ],
     );
   }

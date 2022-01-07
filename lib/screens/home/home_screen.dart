@@ -66,7 +66,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 40,),
             ScrollingExpandedWidget(
-              child: _buildForm(notifier)
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
+                child: _buildForm(notifier)
+              )
             )
           ],
         )
@@ -103,20 +106,21 @@ class _HomeScreenState extends State<HomeScreen> {
             onChanged: (value) => notifier.onRoomCodeChanged(value),
           ),
           const SizedBox(height: 10,),
-          AppButton(text: 'Connect', enabled: notifier.canConnectToRoom, onTap: () => notifier.onTapConnectRoom(), isLoading: notifier.connectToRoomLoading,),
-          const SizedBox(height: 30,),
-          Padding(
+          AppButton(text: 'Connect', enabled: notifier.canConnectToRoom,
+            onTap: () {FocusScope.of(context).requestFocus(FocusNode()); notifier.onTapConnectRoom();}, isLoading: notifier.connectToRoomLoading,),
+            const SizedBox(height: 30,),
+            Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
-                Expanded(child: Divider(
-                  color: Colors.grey,
-                )),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0),
-                  child: RomanText('or', fontSize: 12, color: Colors.grey,),
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: const [
+            Expanded(child: Divider(
+            color: Colors.grey,
+            )),
+            Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15.0),
+            child: RomanText('or', fontSize: 12, color: Colors.grey,),
                 ),
                 Expanded(child: Divider(
                     color: Colors.grey
@@ -135,7 +139,8 @@ class _HomeScreenState extends State<HomeScreen> {
             onChanged: (value) => notifier.onRoomNameChanged(value),
           ),
           const SizedBox(height: 10,),
-          AppButton(text: 'Start new room', enabled: notifier.canStartNewRoom, onTap: () => notifier.onTapStartNewRoom(), isLoading: notifier.startRoomLoading,),
+          AppButton(text: 'Start new room', enabled: notifier.canStartNewRoom,
+            onTap: () {FocusScope.of(context).requestFocus(FocusNode()); notifier.onTapStartNewRoom();}, isLoading: notifier.startRoomLoading,),
           const SizedBox(height: 10,),
           const RomanText('You will be the host of the room', fontSize: 12, color: Colors.grey,),
         ],
