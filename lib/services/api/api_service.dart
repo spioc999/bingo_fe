@@ -158,13 +158,13 @@ class ApiService{
     return response;
   }
 
-  Future<ServiceResponse<int>> assignCardsToUser(String roomCode, String nickname, List<int> cards, {CancelToken? cancelToken}) async {
-    ServiceResponse<int> response = ServiceResponse();
+  Future<ServiceResponse<String>> assignCardsToUser(String roomCode, String nickname, List<int> cards, {CancelToken? cancelToken}) async {
+    ServiceResponse<String> response = ServiceResponse();
 
     AssignCardsRequest body = AssignCardsRequest(cards: cards);
 
     try{
-      response.result = await client.makePost<int>("/user/card/assign/$roomCode/$nickname",
+      response.result = await client.makePost<String>("/user/card/assign/$roomCode/$nickname",
           body: body.toJson(), cancelToken: cancelToken,
           converter: (data) => data);
 

@@ -72,9 +72,9 @@ mixin ServiceMixin on BaseNotifier {
     return response;
   }
 
-  Future<ServiceResponse<int>> assignCardsToUser(String roomCode, String nickname, List<int> cards, {bool isSilent = false}) async {
+  Future<ServiceResponse<String>> assignCardsToUser(String roomCode, String nickname, List<int> cards, {bool isSilent = false}) async {
     if(!isSilent) showLoading();
-    ServiceResponse<int> response = await apiService.assignCardsToUser(roomCode, nickname, cards, cancelToken: cancelToken);
+    ServiceResponse<String> response = await apiService.assignCardsToUser(roomCode, nickname, cards, cancelToken: cancelToken);
     if(!isSilent) hideLoading();
     return response;
   }
