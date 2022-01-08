@@ -143,6 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: () {FocusScope.of(context).requestFocus(FocusNode()); notifier.onTapStartNewRoom();}, isLoading: notifier.startRoomLoading,),
           const SizedBox(height: 10,),
           const RomanText('You will be the host of the room', fontSize: 12, color: Colors.grey,),
+          const SizedBox(height: 10,),
         ],
       ),
     );

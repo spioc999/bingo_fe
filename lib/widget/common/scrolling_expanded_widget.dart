@@ -10,9 +10,12 @@ class ScrollingExpandedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: SingleChildScrollView(
-          physics: physics ?? const BouncingScrollPhysics(),
-          child: child,
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+          child: SingleChildScrollView(
+            physics: physics ?? const BouncingScrollPhysics(),
+            child: child,
+          ),
         )
     );
   }

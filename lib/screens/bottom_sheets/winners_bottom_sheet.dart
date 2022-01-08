@@ -32,15 +32,15 @@ class WinnersBottomSheet extends StatelessWidget with RouteMixin{
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    const SizedBox(width: 30,),
+                    const SizedBox(width: 40,),
                     const RomanText(
                       'WINNERS', textAlign: TextAlign.center, fontSize: 16, maxLines: 6,
                     ),
                     SizedBox(
-                      width: 30,
-                      height: 20,
+                      width: 40,
+                      height: 30,
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 10.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0,),
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onTap: () => pop(),

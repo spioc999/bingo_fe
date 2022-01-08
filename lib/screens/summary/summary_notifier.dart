@@ -10,6 +10,7 @@ class SummaryNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
   String? _nickname;
   String? _roomName;
   String? _roomCode;
+  int? _lastNumberExtracted;
   Map<WinTypeEnum, List<String>> winners = {};
 
   goToHome() async{
@@ -27,6 +28,7 @@ class SummaryNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
     _roomName = roomInfoResponse.result?.roomName;
     notifyListeners();
     await _getWinnersOfRoom();
+    await _getLastExtractedNumber();
     hideLoading();
   }
 
@@ -34,6 +36,14 @@ class SummaryNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
     final response = await getWinnersOfRoom(roomCode, isSilent: true);
     if(!response.hasError){
       winners = response.result?.winners ?? {};
+      notifyListeners();
+    }
+  }
+
+  Future<void> _getLastExtractedNumber() async {
+    final lastExtractedByRoomResponse = await getLastExtractedNumber(roomCode, isSilent: true);
+    if(lastExtractedByRoomResponse.result != null && lastExtractedByRoomResponse.result! > 0){
+      _lastNumberExtracted = lastExtractedByRoomResponse.result;
       notifyListeners();
     }
   }
@@ -57,5 +67,7 @@ class SummaryNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
       return winnersString.substring(0, winnersString.length - 2);
     }
   }
+
   List<WinTypeEnum> get winTypeEnumListWithoutTombolaSorted => winners.keys.toList()..remove(WinTypeEnum.TOMBOLA)..sort((a, b) => a.number.compareTo(b.number));
+  int? get lastExtractedNumber => _lastNumberExtracted;
 }

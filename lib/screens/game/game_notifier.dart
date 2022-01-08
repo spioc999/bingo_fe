@@ -24,6 +24,9 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   Map<WinTypeEnum, List<String>> winners = {};
   bool _hasTappedExtract = false;
   bool _tombolaWon = false;
+  bool _hasRetriedToJoin = false;
+  bool showRoomMessage = true;
+  List<int> cardsWithExtractedNumber = [];
 
   GameNotifier(this.cards);
 
@@ -81,7 +84,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   }
 
   void _addListenersSocketAndJoin() {
-    socket = SocketHelper.createAndConnectSocket(apiService.client.basePath);
+    socket = SocketHelper.createSocket(apiService.client.basePath);
     SocketHelper.addListenersOnSocket(socket,
       onErrorMessage: _onErrorMessageSocket,
       onRoomServiceMessages: _onRoomServiceMessages,
@@ -89,18 +92,30 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
       onWinnerEvent: _onWinnerEvent,
       onUpdatedCard: _onUpdatedCard
     );
-    SocketHelper.joinRoomSocket(socket, _roomCode, _nickname);
+    joinRoomSocket();
   }
 
   void _onErrorMessageSocket(dynamic data) {
-    final message = MessageSocket.fromJson(data);
-    showMessage(message.msg ?? '', messageType: MessageTypeEnum.error);
+    try{
+      final message = MessageSocket.fromJson(data);
+      showMessage(message.msg ?? '', messageType: MessageTypeEnum.error);
+      // error sent only to involved user, so leave and retry to connect to room
+      if(!_hasRetriedToJoin){
+        leaveRoomSocket();
+        joinRoomSocket();
+        _hasRetriedToJoin = true;
+      }
+    }catch(_){}
   }
 
   void _onRoomServiceMessages(dynamic data){
-    final message = MessageSocket.fromJson(data);
-    showMessage(message.msg ?? '');
-    _updateNumberUserConnected();
+    try{
+      final message = MessageSocket.fromJson(data);
+      if(showRoomMessage){
+        showMessage(message.msg ?? '');
+      }
+      _updateNumberUserConnected();
+    }catch(_){}
   }
 
   void _updateNumberUserConnected() async{
@@ -109,34 +124,57 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   }
 
   void _onExtractedNumber(dynamic data){
-    final message = ExtractNumberMessageSocket.fromJson(data);
-    if(!_isHost){
-      _lastExtractedNumber = message.number;
-      notifyListeners();
-    }
+    try{
+      final message = ExtractNumberMessageSocket.fromJson(data);
+      if(!_isHost){
+        _lastExtractedNumber = int.tryParse(message.number ?? '');
+        notifyListeners();
+      }
+    }catch(_){}
   }
 
   void _onWinnerEvent(dynamic data){
-    final message = WinnerMessageSocket.fromJson(data);
-    showMessage(
-      '${message.userNickname == _nickname ? 'You' : message.userNickname} won ${message.winType?.toString().split('.')[1]} with card ${message.cardId}!',
-      messageType: MessageTypeEnum.win,
-      isBold: message.userNickname == _nickname
-    );
-    if(message.winType == WinTypeEnum.TOMBOLA){
-      _tombolaWon = true;
-      navigateTo(RouteEnum.summary, shouldClearAll: true);
-    }else{
-      _getWinnersOfRoom();
-    }
+    try{
+      final message = WinnerMessageSocket.fromJson(data);
+      String messageString = '';
+      bool containsCurrentUser = false;
+      for (var winner in message.winners ?? <WinnerElement>[]){
+        messageString += '${winner.userNickname == _nickname ? 'You' : winner.userNickname} (card ${winner.cardId}), ';
+        if (!containsCurrentUser){
+          containsCurrentUser = winner.userNickname == _nickname;
+        }
+      }
+
+      if(messageString.isNotEmpty){
+        showMessage(
+            '${messageString.substring(0, messageString.length - 2)} won ${message.winType?.toString().split('.')[1]}!',
+            messageType: MessageTypeEnum.win,
+            isBold: containsCurrentUser
+        );
+      }
+
+      if(message.winType == WinTypeEnum.TOMBOLA){
+        _tombolaWon = true;
+        navigateTo(RouteEnum.summary, shouldClearAll: true);
+      }else{
+        _getWinnersOfRoom();
+      }
+
+    }catch(_){}
+
   }
 
   void _onUpdatedCard(dynamic data) async{
-    final message = UpdateUserMessageSocket.fromJson(data);
-    if(!_isHost && message.userNickname == _nickname){
-      await _refreshCards();
-      notifyListeners();
-    }
+    try{
+      cardsWithExtractedNumber = [];
+      final message = UpdateUserMessageSocket.fromJson(data);
+      final updateCardsOfUser = message.updatedCards?.where((card) => card.userNickname == _nickname).toList();
+      if(!_isHost && updateCardsOfUser != null && updateCardsOfUser.isNotEmpty){
+        cardsWithExtractedNumber = updateCardsOfUser.map((card) => card.cardId ?? 0).toList();
+        await _refreshCards();
+        notifyListeners();
+      }
+    }catch(_){}
   }
 
   void openWinners(){
@@ -159,12 +197,21 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   }
 
   leaveRoomSocket(){
+    showRoomMessage = false;
+    socket?.disconnect();
     SocketHelper.leaveRoomSocket(socket);
+  }
+
+  joinRoomSocket(){
+    showRoomMessage = true;
+    socket?.connect();
+    SocketHelper.joinRoomSocket(socket, _roomCode, _nickname);
   }
 
   @override
   void dispose() {
     leaveRoomSocket();
+    socket?.disconnect();
     socket?.dispose();
     super.dispose();
   }
@@ -176,4 +223,14 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   int? get lastExtractedNumber => _lastExtractedNumber;
   int get numberUsersConnected => _numberOfUserConnected ?? 0;
   bool get isLoadingExtract => isLoading && _hasTappedExtract;
+  String get cardsWithExtractedNumberString {
+    String cardsWithNumber = '';
+    for (var card in cardsWithExtractedNumber){
+      cardsWithNumber += '$card, ';
+    }
+    if(cardsWithNumber.isNotEmpty){
+      cardsWithNumber = cardsWithNumber.substring(0, cardsWithNumber.length - 2);
+    }
+    return cardsWithNumber;
+  }
 }
