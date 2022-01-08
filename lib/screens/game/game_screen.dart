@@ -32,8 +32,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    if (state == AppLifecycleState.detached) {
+    if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
       Provider.of<GameNotifier>(context, listen: false).leaveRoomSocket();
+    }else if(state == AppLifecycleState.resumed){
+      Provider.of<GameNotifier>(context, listen: false).joinRoomSocket();
     }
   }
 
@@ -136,6 +138,43 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
         ),
         const SizedBox(height: 30,),
         notifier.isLoading && !notifier.isLoadingExtract ? const Center(child: CircularProgressIndicator()) :
+        Expanded(child: _buildBody(notifier)),
+      ],
+    );
+  }
+  
+  _buildBody(GameNotifier notifier){
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        notifier.isHost ? Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: notifier.lastExtractedNumber != null ? Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const RomanText('Last extracted number: ', fontSize: 15,),
+              BoldText(notifier.lastExtractedNumber.toString(), fontSize: 17,),
+              const SizedBox(width: 30,),
+              Expanded(child: AppButton(text: 'EXTRACT', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoadingExtract,))
+            ],
+          ) : Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: AppButton(icon: Icons.play_circle_outline,text: 'START GAME', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoadingExtract,),
+          ),
+        ) : Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: notifier.lastExtractedNumber != null ? Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const RomanText('Last extracted number: ', fontSize: 15,),
+              BoldText(notifier.lastExtractedNumber.toString(), fontSize: 17,)
+            ],
+          ) : const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: RomanText('Awaiting for host to start the game!', fontSize: 13, color: Colors.black87,),
+          ),
+        ),
+        const SizedBox(height: 40,),
         ScrollingExpandedWidget(
             child: SizedBox(
               width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
@@ -150,26 +189,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: notifier.lastExtractedNumber != null ? Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              const RomanText('Last extracted number: ', fontSize: 15,),
-              BoldText(notifier.lastExtractedNumber.toString(), fontSize: 17,),
-              const SizedBox(width: 30,),
-              Expanded(child: AppButton(text: 'EXTRACT', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoadingExtract,))
-            ],
-          ) : Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: AppButton(icon: Icons.play_circle_outline,text: 'START GAME', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoadingExtract,),
-          ),
-        ),
-        const SizedBox(height: 40,),
         const BoldText('BANK PAPER', fontSize: 16,),
         const SizedBox(height: 10,),
         HostPaperWidget(hostCards: notifier.cards, color: notifier.cards.first.color,),
-        SizedBox(height: 50, width: MediaQuery.of(context).size.width),
+        const SizedBox(height: 50),
       ],
     );
   }
@@ -178,23 +201,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: notifier.lastExtractedNumber != null ? Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              const RomanText('Last extracted number: ', fontSize: 15,),
-              BoldText(notifier.lastExtractedNumber.toString(), fontSize: 17,)
-            ],
-          ) : const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: RomanText('Awaiting for host to start the game!', fontSize: 13, color: Colors.black87,),
-          ),
-        ),
-        const SizedBox(height: 30,),
         const BoldText('Player\'s cards', fontSize: 16,),
         const SizedBox(height: 10,),
-        _buildCards(notifier)
+        _buildCards(notifier),
+        const SizedBox(height: 55,),
       ],
     );
   }

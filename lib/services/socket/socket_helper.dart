@@ -30,7 +30,6 @@ class SocketHelper {
 
   static void leaveRoomSocket(Socket? socket){
     socket?.emit(SocketEventTypeEnum.leaveRoom.name);
-    socket?.disconnect();
   }
 
   static void addListenersOnSocket(Socket? socket,

@@ -140,6 +140,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
             );
           },
           itemCount: notifier.winTypeEnumListWithoutTombolaSorted.length,
+        ),
+        const SizedBox(height: 20,),
+        Visibility(
+          visible: notifier.lastExtractedNumber != null,
+          child: RomanText('Last extracted number: ${notifier.lastExtractedNumber}', color: Colors.grey, maxLines: 10,),
         )
       ],
     );

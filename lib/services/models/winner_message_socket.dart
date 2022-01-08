@@ -1,16 +1,31 @@
 import 'package:enum_to_string/enum_to_string.dart';
 
 class WinnerMessageSocket {
-  String? userNickname;
-  int? cardId;
+  List<WinnerElement>? winners;
   WinTypeEnum? winType;
 
-  WinnerMessageSocket({this.userNickname, this.cardId, this.winType});
+  WinnerMessageSocket({this.winners, this.winType});
 
   WinnerMessageSocket.fromJson(Map<String, dynamic> json) {
-    userNickname = json['user_nickname'];
+    if(json['winners'] != null){
+      winners = [];
+      json['winners'].forEach((v) {
+        winners?.add(WinnerElement.fromJson(v));
+      });
+    }
     winType = EnumToString.fromString(WinTypeEnum.values, json['win_type'] ?? 'NONE');
-    cardId = int.tryParse(json['card_id']);
+  }
+}
+
+class WinnerElement{
+  String? userNickname;
+  int? cardId;
+
+  WinnerElement({this.userNickname, this.cardId});
+
+  WinnerElement.fromJson(Map<String, dynamic> json) {
+    userNickname = json['user_nickname'];
+    cardId = json['card_id'];
   }
 }
 
