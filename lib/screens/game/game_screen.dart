@@ -33,9 +33,9 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
-      Provider.of<GameNotifier>(context, listen: false).leaveRoomSocket();
+      Provider.of<GameNotifier>(context, listen: false).leaveRoomAndDisconnectSocket();
     }else if(state == AppLifecycleState.resumed){
-      Provider.of<GameNotifier>(context, listen: false).joinRoomSocket();
+      Provider.of<GameNotifier>(context, listen: false).connectAndJoinRoomSocket();
     }
   }
 
