@@ -26,6 +26,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   bool _tombolaWon = false;
   bool _hasRetriedToJoin = false;
   bool showRoomMessage = true;
+  List<int> cardsWithExtractedNumber = [];
 
   GameNotifier(this.cards);
 
@@ -83,7 +84,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   }
 
   void _addListenersSocketAndJoin() {
-    socket = SocketHelper.createAndConnectSocket(apiService.client.basePath);
+    socket = SocketHelper.createSocket(apiService.client.basePath);
     SocketHelper.addListenersOnSocket(socket,
       onErrorMessage: _onErrorMessageSocket,
       onRoomServiceMessages: _onRoomServiceMessages,
@@ -165,9 +166,11 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
 
   void _onUpdatedCard(dynamic data) async{
     try{
+      cardsWithExtractedNumber = [];
       final message = UpdateUserMessageSocket.fromJson(data);
-      if(!_isHost &&
-          (message.updatedCards?.any((updCard) => updCard.userNickname == _nickname) ?? false)){
+      final updateCardsOfUser = message.updatedCards?.where((card) => card.userNickname == _nickname).toList();
+      if(!_isHost && updateCardsOfUser != null && updateCardsOfUser.isNotEmpty){
+        cardsWithExtractedNumber = updateCardsOfUser.map((card) => card.cardId ?? 0).toList();
         await _refreshCards();
         notifyListeners();
       }
@@ -195,11 +198,13 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
 
   leaveRoomSocket(){
     showRoomMessage = false;
+    socket?.disconnect();
     SocketHelper.leaveRoomSocket(socket);
   }
 
   joinRoomSocket(){
     showRoomMessage = true;
+    socket?.connect();
     SocketHelper.joinRoomSocket(socket, _roomCode, _nickname);
   }
 
@@ -218,4 +223,14 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   int? get lastExtractedNumber => _lastExtractedNumber;
   int get numberUsersConnected => _numberOfUserConnected ?? 0;
   bool get isLoadingExtract => isLoading && _hasTappedExtract;
+  String get cardsWithExtractedNumberString {
+    String cardsWithNumber = '';
+    for (var card in cardsWithExtractedNumber){
+      cardsWithNumber += '$card, ';
+    }
+    if(cardsWithNumber.isNotEmpty){
+      cardsWithNumber = cardsWithNumber.substring(0, cardsWithNumber.length - 2);
+    }
+    return cardsWithNumber;
+  }
 }

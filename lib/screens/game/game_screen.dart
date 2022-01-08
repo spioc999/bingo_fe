@@ -142,36 +142,44 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
       ],
     );
   }
-  
+
   _buildBody(GameNotifier notifier){
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        notifier.isHost ? Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: notifier.lastExtractedNumber != null ? Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              const RomanText('Last extracted number: ', fontSize: 15,),
-              BoldText(notifier.lastExtractedNumber.toString(), fontSize: 17,),
-              const SizedBox(width: 30,),
-              Expanded(child: AppButton(text: 'EXTRACT', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoadingExtract,))
-            ],
+        SizedBox(
+          width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,
+          child: notifier.isHost ? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: notifier.lastExtractedNumber != null ? Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                const RomanText('Last extracted number: ', fontSize: 15,),
+                BoldText(notifier.lastExtractedNumber.toString(), fontSize: 17,),
+                const SizedBox(width: 30,),
+                Expanded(child: AppButton(text: 'EXTRACT', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoadingExtract,))
+              ],
+            ) : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: AppButton(icon: Icons.play_circle_outline,text: 'START GAME', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoadingExtract,),
+            ),
           ) : Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: AppButton(icon: Icons.play_circle_outline,text: 'START GAME', onTap: () => notifier.onTapExtractNumber(), isLoading: notifier.isLoadingExtract,),
-          ),
-        ) : Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: notifier.lastExtractedNumber != null ? Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              const RomanText('Last extracted number: ', fontSize: 15,),
-              BoldText(notifier.lastExtractedNumber.toString(), fontSize: 17,)
-            ],
-          ) : const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: RomanText('Awaiting for host to start the game!', fontSize: 13, color: Colors.black87,),
+            child: notifier.lastExtractedNumber != null ? Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                const RomanText('Last extracted number: ', fontSize: 15,),
+                BoldText(notifier.lastExtractedNumber.toString(), fontSize: 17,),
+                Visibility(
+                  visible: notifier.cardsWithExtractedNumber.isNotEmpty,
+                  child: Expanded(
+                    child: RomanText(' present in cards: ${notifier.cardsWithExtractedNumberString}', maxLines: 10, fontSize: 15, color: Colors.black87,))
+                )
+              ],
+            ) : const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: RomanText('Awaiting for host to start the game!', fontSize: 13, color: Colors.black87,),
+            ),
           ),
         ),
         const SizedBox(height: 40,),

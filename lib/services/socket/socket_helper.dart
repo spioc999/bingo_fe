@@ -4,7 +4,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketHelper {
 
-  static Socket createAndConnectSocket(String url){
+  static Socket createSocket(String url){
     final Map<String, dynamic> opts;
     if(kIsWeb){
       opts = <String, dynamic> {
@@ -17,7 +17,6 @@ class SocketHelper {
       };
     }
     final socket = IO.io(url, opts);
-    socket.connect();
     return socket;
   }
 

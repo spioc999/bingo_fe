@@ -144,7 +144,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
         const SizedBox(height: 20,),
         Visibility(
           visible: notifier.lastExtractedNumber != null,
-          child: RomanText('Last extracted number: ${notifier.lastExtractedNumber}', color: Colors.grey, maxLines: 10,),
+          child: RomanText('Last extracted number: ${notifier.lastExtractedNumber}', color: Colors.black87, maxLines: 5,),
         )
       ],
     );
