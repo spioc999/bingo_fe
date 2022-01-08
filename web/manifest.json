@@ -1,11 +1,11 @@
 {
-    "name": "bingo_fe",
-    "short_name": "bingo_fe",
+    "name": "Bingo FE",
+    "short_name": "Bingo FE",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Exam project for "Programming" univerisity course @ UniCampus Rome - Developed by SPC & PR",
+    "description": "Exam project for \"Programming\" university course @ UniCampus Rome - Developed by SPC & PR",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
