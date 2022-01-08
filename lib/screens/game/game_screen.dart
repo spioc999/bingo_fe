@@ -33,9 +33,9 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
-      Provider.of<GameNotifier>(context, listen: false).leaveRoomSocket();
+      Provider.of<GameNotifier>(context, listen: false).leaveRoomAndDisconnectSocket();
     }else if(state == AppLifecycleState.resumed){
-      Provider.of<GameNotifier>(context, listen: false).joinRoomSocket();
+      Provider.of<GameNotifier>(context, listen: false).connectAndJoinRoomSocket();
     }
   }
 
@@ -173,7 +173,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
                 Visibility(
                   visible: notifier.cardsWithExtractedNumber.isNotEmpty,
                   child: Expanded(
-                    child: RomanText(' present in cards: ${notifier.cardsWithExtractedNumberString}', maxLines: 10, fontSize: 15, color: Colors.black87,))
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: RomanText('present in cards: ${notifier.cardsWithExtractedNumberString}', maxLines: 10, fontSize: 15, color: Colors.black87,),
+                    ))
                 )
               ],
             ) : const Padding(

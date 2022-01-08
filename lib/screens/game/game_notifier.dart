@@ -92,7 +92,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
       onWinnerEvent: _onWinnerEvent,
       onUpdatedCard: _onUpdatedCard
     );
-    joinRoomSocket();
+    connectAndJoinRoomSocket();
   }
 
   void _onErrorMessageSocket(dynamic data) {
@@ -101,8 +101,8 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
       showMessage(message.msg ?? '', messageType: MessageTypeEnum.error);
       // error sent only to involved user, so leave and retry to connect to room
       if(!_hasRetriedToJoin){
-        leaveRoomSocket();
-        joinRoomSocket();
+        leaveRoomAndDisconnectSocket();
+        connectAndJoinRoomSocket();
         _hasRetriedToJoin = true;
       }
     }catch(_){}
@@ -190,19 +190,19 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   }
 
   void leaveGame() {
-    leaveRoomSocket();
+    leaveRoomAndDisconnectSocket();
     saveRoomInfo(null, isSilent: true);
     saveIsHost(false, isSilent: true);
     navigateTo(RouteEnum.home, shouldClearAll: true);
   }
 
-  leaveRoomSocket(){
+  leaveRoomAndDisconnectSocket(){
     showRoomMessage = false;
-    socket?.disconnect();
     SocketHelper.leaveRoomSocket(socket);
+    socket?.disconnect();
   }
 
-  joinRoomSocket(){
+  connectAndJoinRoomSocket(){
     showRoomMessage = true;
     socket?.connect();
     SocketHelper.joinRoomSocket(socket, _roomCode, _nickname);
@@ -210,8 +210,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
 
   @override
   void dispose() {
-    leaveRoomSocket();
-    socket?.disconnect();
+    leaveRoomAndDisconnectSocket();
     socket?.dispose();
     super.dispose();
   }
