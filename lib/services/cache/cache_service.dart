@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bingo_fe/models/room_info.dart';
 import 'package:bingo_fe/services/service_response.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CacheService{
   static const int cacheNotFoundCode = 404;
@@ -10,14 +11,14 @@ class CacheService{
   static const int cacheErrorCode = 500;
   static const String cacheErrorMessage = "Cache error";
 
-  final FlutterSecureStorage client;
+  final Object client;
 
   CacheService({required this.client});
 
   Future<ServiceResponse> saveIsHost(bool? isHost) async {
     ServiceResponse response = ServiceResponse();
     try{
-      await client.write(
+      await _write(
           key: StorageKeys.isHost,
           value: (isHost ?? false).toString());
     } catch (_) {
@@ -28,7 +29,7 @@ class CacheService{
 
   Future<ServiceResponse<bool>> isHost() async {
     ServiceResponse<bool> response = ServiceResponse();
-    String? data = await client.read(key: StorageKeys.isHost);
+    String? data = await _read(key: StorageKeys.isHost);
     response.result = data == 'true' ? true : false;
     return response;
   }
@@ -36,7 +37,7 @@ class CacheService{
   Future<ServiceResponse> saveNickname(String? nickname) async {
     ServiceResponse response = ServiceResponse();
     try{
-      await client.write(
+      await _write(
           key: StorageKeys.nickname,
           value: nickname);
     } catch (_) {
@@ -47,7 +48,7 @@ class CacheService{
 
   Future<ServiceResponse<String>> getNickname() async {
     ServiceResponse<String> response = ServiceResponse();
-    String? data = await client.read(key: StorageKeys.nickname);
+    String? data = await _read(key: StorageKeys.nickname);
     if(data == null){
       response.error = _notFoundError;
       return response;
@@ -59,7 +60,7 @@ class CacheService{
   Future<ServiceResponse> saveRoomInfo(RoomInfo? roomInfo) async {
     ServiceResponse response = ServiceResponse();
     try{
-      await client.write(
+      await _write(
           key: StorageKeys.roomInfo,
           value: roomInfo == null ? null : jsonEncode(roomInfo.toJson()));
     } catch (_) {
@@ -70,7 +71,7 @@ class CacheService{
 
   Future<ServiceResponse<RoomInfo>> getRoomInfo() async {
     ServiceResponse<RoomInfo> response = ServiceResponse();
-    String? data = await client.read(key: StorageKeys.roomInfo);
+    String? data = await _read(key: StorageKeys.roomInfo);
     if(data == null){
       response.error = _notFoundError;
       return response;
@@ -81,6 +82,31 @@ class CacheService{
       response.error = _genericError;
     }
     return response;
+  }
+
+  Future<void> _write({required String key, required String? value}) async{
+    if(client is FlutterSecureStorage){
+      await (client as FlutterSecureStorage).write(key: key, value: value);
+    }else if(client is SharedPreferences){
+      await (client as SharedPreferences).setString(key, value ?? '');
+    }
+  }
+
+  Future<String?> _read({required String key}) async{
+    if(client is FlutterSecureStorage){
+      return await (client as FlutterSecureStorage).read(key: key);
+    }else if(client is SharedPreferences){
+      return await Future.value((client as SharedPreferences).getString(key));
+    }
+    return Future.value(null);
+  }
+
+  Future<void> _delete({required String key}) async{
+    if(client is FlutterSecureStorage){
+      await (client as FlutterSecureStorage).delete(key: key);
+    }else if(client is SharedPreferences){
+      await (client as SharedPreferences).remove(key);
+    }
   }
 
   ServiceError get _notFoundError =>
