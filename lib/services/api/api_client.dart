@@ -146,13 +146,8 @@ class ApiClient with RouteMixin {
         },
         onError: (DioError e, ErrorInterceptorHandler handler) async {
           _printError(e);
-
-          if(e.response?.statusCode == 401 &&
-              !isCurrent(RouteEnum.home)){
-            navigateToLoginForUnauthorized();
-          }else{
-            handler.next(e);
-          }
+          handler.next(e);
+          // here if you want to handle http errors
         },
       ),
     );

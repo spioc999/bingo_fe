@@ -31,7 +31,7 @@ class BingoFeApp extends StatelessWidget{
     return MaterialApp(
       title: 'Bingo FE',
       theme: ThemeData(
-        primarySwatch: Colors.amber,
+        primarySwatch: Colors.red,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {
