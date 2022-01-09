@@ -3,6 +3,7 @@ import 'package:bingo_fe/mixins/mixin_service.dart';
 import 'package:bingo_fe/models/card_model.dart';
 import 'package:bingo_fe/navigation/mixin_route.dart';
 import 'package:bingo_fe/navigation/routes.dart';
+import 'package:bingo_fe/screens/bottom_sheets/players_online_bottom_sheet.dart';
 import 'package:bingo_fe/screens/bottom_sheets/winners_bottom_sheet.dart';
 import 'package:bingo_fe/services/models/extract_number_message_socket.dart';
 import 'package:bingo_fe/services/models/message_socket.dart';
@@ -27,6 +28,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   bool _hasRetriedToJoin = false;
   bool showRoomMessage = true;
   List<int> cardsWithExtractedNumber = [];
+  List<String> _onlinePlayersNicknames = [];
 
   GameNotifier(this.cards);
 
@@ -119,8 +121,12 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   }
 
   void _updateNumberUserConnected() async{
-    _numberOfUserConnected = (await getOnlinePlayersRoom(_roomCode ?? '', isSilent: true)).result;
-    notifyListeners();
+    final response = await getOnlinePlayersRoom(_roomCode ?? '', isSilent: true);
+    if(!response.hasError){
+      _numberOfUserConnected = response.result?.onlinePlayersNumber;
+      _onlinePlayersNicknames = response.result?.onlinePlayersNicknames ?? [];
+      notifyListeners();
+    }
   }
 
   void _onExtractedNumber(dynamic data){
@@ -172,13 +178,19 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
       if(!_isHost && updateCardsOfUser != null && updateCardsOfUser.isNotEmpty){
         cardsWithExtractedNumber = updateCardsOfUser.map((card) => card.cardId ?? 0).toList();
         await _refreshCards();
-        notifyListeners();
       }
+      notifyListeners();
     }catch(_){}
   }
 
   void openWinners(){
     navigateToBottomSheet(WinnersBottomSheet(winners: winners, userNickname: nickname,));
+  }
+
+  void openPlayers() {
+    if(_onlinePlayersNicknames.isNotEmpty){
+      navigateToBottomSheet(PlayersOnlineBottomSheet(players: _onlinePlayersNicknames, userNickname: nickname,));
+    }
   }
 
   Future<void> _getWinnersOfRoom() async {

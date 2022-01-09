@@ -5,6 +5,7 @@ import 'package:bingo_fe/services/cache/cache_service.dart';
 import 'package:bingo_fe/services/models/bingo_paper.dart';
 import 'package:bingo_fe/services/models/create_room_response.dart';
 import 'package:bingo_fe/services/models/joined_room_response.dart';
+import 'package:bingo_fe/services/models/online_players_response.dart';
 import 'package:bingo_fe/services/models/user_cards.dart';
 import 'package:bingo_fe/services/models/winners_response.dart';
 import 'package:bingo_fe/services/service_response.dart';
@@ -44,9 +45,9 @@ mixin ServiceMixin on BaseNotifier {
     return response;
   }
 
-  Future<ServiceResponse<int>> getOnlinePlayersRoom(String roomCode, {bool isSilent = false}) async {
+  Future<ServiceResponse<OnlinePlayersResponse>> getOnlinePlayersRoom(String roomCode, {bool isSilent = false}) async {
     if(!isSilent) showLoading();
-    ServiceResponse<int> response = await apiService.getOnlinePlayersRoom(roomCode, cancelToken: cancelToken);
+    ServiceResponse<OnlinePlayersResponse> response = await apiService.getOnlinePlayersRoom(roomCode, cancelToken: cancelToken);
     if(!isSilent) hideLoading();
     return response;
   }

@@ -6,6 +6,7 @@ import 'package:bingo_fe/widget/common/scrolling_expanded_widget.dart';
 import 'package:bingo_fe/widget/host_paper_widget.dart';
 import 'package:bingo_fe/widget/texts/bold_text.dart';
 import 'package:bingo_fe/widget/texts/roman_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.detached || (!kIsWeb && state == AppLifecycleState.paused)) {
       Provider.of<GameNotifier>(context, listen: false).leaveRoomAndDisconnectSocket();
     }else if(state == AppLifecycleState.resumed){
       Provider.of<GameNotifier>(context, listen: false).connectAndJoinRoomSocket();
@@ -121,17 +122,26 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
                   ),
                 ),
                 const SizedBox(height: 10, child: VerticalDivider(color: Colors.black45,)),
-                RomanText(notifier.numberUsersConnected.toString(), color: Colors.black87,),
-                const SizedBox(width: 5,),
-                Container(
-                    width: 7,
-                    height: 7,
-                    decoration: const BoxDecoration(
-                      color: Colors.green,
-                      shape: BoxShape.circle,
-                    )
-                ),
-                const SizedBox(width: 5,),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      RomanText(notifier.numberUsersConnected.toString(), color: Colors.black87,),
+                      const SizedBox(width: 5,),
+                      Container(
+                          width: 7,
+                          height: 7,
+                          decoration: const BoxDecoration(
+                            color: Colors.green,
+                            shape: BoxShape.circle,
+                          )
+                      ),
+                      const SizedBox(width: 5,),
+                    ],
+                  ),
+                  onTap: () => notifier.openPlayers(),
+                )
               ],
             ),
           ),
@@ -165,19 +175,22 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
             ),
           ) : Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: notifier.lastExtractedNumber != null ? Row(
-              mainAxisSize: MainAxisSize.max,
+            child: notifier.lastExtractedNumber != null ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const RomanText('Last extracted number: ', fontSize: 15,),
-                BoldText(notifier.lastExtractedNumber.toString(), fontSize: 17,),
-                Visibility(
-                  visible: notifier.cardsWithExtractedNumber.isNotEmpty,
-                  child: Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 5.0),
-                      child: RomanText('present in cards: ${notifier.cardsWithExtractedNumberString}', maxLines: 10, fontSize: 15, color: Colors.black87,),
-                    ))
-                )
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    const RomanText('Last extracted number: ', fontSize: 15,),
+                    BoldText(notifier.lastExtractedNumber.toString(), fontSize: 17,),
+                  ],
+                ),
+                RomanText(
+                  'In cards: ${notifier.cardsWithExtractedNumberString}',
+                  maxLines: 10,
+                  fontSize: 14,
+                  color: notifier.cardsWithExtractedNumber.isNotEmpty ? Colors.black : Colors.white,)
               ],
             ) : const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -185,7 +198,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
             ),
           ),
         ),
-        const SizedBox(height: 40,),
+        const SizedBox(height: 20,),
         ScrollingExpandedWidget(
             child: SizedBox(
               width: MediaQuery.of(context).size.width > 750 ? 750 : MediaQuery.of(context).size.width,

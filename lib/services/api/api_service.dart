@@ -6,6 +6,7 @@ import 'package:bingo_fe/services/models/bingo_paper.dart';
 import 'package:bingo_fe/services/models/create_room_response.dart';
 import 'package:bingo_fe/services/models/joined_room_response.dart';
 import 'package:bingo_fe/services/models/next_bingo_paper_request.dart';
+import 'package:bingo_fe/services/models/online_players_response.dart';
 import 'package:bingo_fe/services/models/user_cards.dart';
 import 'package:bingo_fe/services/models/winners_response.dart';
 import 'package:bingo_fe/services/service_response.dart';
@@ -85,13 +86,13 @@ class ApiService{
     return response;
   }
 
-  Future<ServiceResponse<int>> getOnlinePlayersRoom(String roomCode, {CancelToken? cancelToken}) async {
-    ServiceResponse<int> response = ServiceResponse();
+  Future<ServiceResponse<OnlinePlayersResponse>> getOnlinePlayersRoom(String roomCode, {CancelToken? cancelToken}) async {
+    ServiceResponse<OnlinePlayersResponse> response = ServiceResponse();
 
     try{
-      response.result = await client.makeGet<int>("/room/online_players/$roomCode",
+      response.result = await client.makeGet<OnlinePlayersResponse>("/room/online_players/$roomCode",
           cancelToken: cancelToken,
-          converter: (data) => int.tryParse(data) ?? 0);
+          converter: (data) => OnlinePlayersResponse.fromJson(data));
 
     } on DioError catch (e) {
       response.error = ServiceError(e.response?.statusCode ?? _genericError.errorCode, e.response?.data ?? e.response?.statusMessage ?? _genericError.errorMessage);
