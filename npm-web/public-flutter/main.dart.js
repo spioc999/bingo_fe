@@ -8528,7 +8528,7 @@ o=new A.Xz($,new A.Hd(A.a([],t.lC),new A.xg(),new A.xg(),new A.xg()),$,new A.Xp(
 n=A.aCs()
 o.On$=n
 o.Oo$=new A.VK(A.a([],t.Hh))
-q=new A.UL(A.r(p,p),"http://127.0.0.1:8080",o)
+q=new A.UL(A.r(p,p),"http://51.77.137.143:8080",o)
 q.a4F()
 $.aoT().Qw(new A.akw(q),t.q3)
 $.aoT().Qw(new A.akx(),t.Nv)
