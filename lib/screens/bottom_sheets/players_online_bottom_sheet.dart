@@ -1,4 +1,5 @@
 import 'package:bingo_fe/navigation/mixin_route.dart';
+import 'package:bingo_fe/widget/common/scrolling_flexible_loose_widget.dart';
 import 'package:bingo_fe/widget/common/top_rounded_container.dart';
 import 'package:bingo_fe/widget/texts/roman_text.dart';
 import 'package:flutter/material.dart';
@@ -48,17 +49,19 @@ class PlayersOnlineBottomSheet extends StatelessWidget with RouteMixin{
                   ],
                 ),
                 const SizedBox(height: 20,),
-                ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (_, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: RomanText(players[index] == userNickname ? 'YOU' : players[index]),
-                    );
-                  },
-                  itemCount: players.length,
+                ScrollingFlexibleLooseWidget(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    physics: const BouncingScrollPhysics(),
+                    itemBuilder: (_, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: RomanText(players[index] == userNickname ? 'YOU' : players[index]),
+                      );
+                    },
+                    itemCount: players.length,
+                  )
                 )
               ],
             ),

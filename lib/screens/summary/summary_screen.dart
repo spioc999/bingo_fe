@@ -3,6 +3,7 @@ import 'package:bingo_fe/screens/summary/summary_notifier.dart';
 import 'package:bingo_fe/widget/common/scrolling_expanded_widget.dart';
 import 'package:bingo_fe/widget/texts/bold_text.dart';
 import 'package:bingo_fe/widget/texts/roman_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
@@ -61,8 +62,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   Colors.red.withOpacity(0.8)
                 ]
             ),
-            borderRadius: const BorderRadius.only(
-                bottomRight: Radius.circular(25.0)),
+            borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(25.0)),
           ),
           width: MediaQuery.of(context).size.width,
           child: Column(
@@ -89,7 +90,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
       ],
     );
 
-    if(!notifier.isLoading){
+    if(!notifier.isLoading && !kIsWeb){
       return Stack(
         children: [
           SizedBox(
@@ -141,7 +142,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
           },
           itemCount: notifier.winTypeEnumListWithoutTombolaSorted.length,
         ),
-        const SizedBox(height: 20,),
+        const SizedBox(height: 40,),
         Visibility(
           visible: notifier.lastExtractedNumber != null,
           child: RomanText('Last extracted number: ${notifier.lastExtractedNumber}', color: Colors.black87, maxLines: 5,),

@@ -46,9 +46,9 @@ class _SplashScreenState extends State<SplashScreen> {
                     fit: BoxFit.fitHeight
                 ),
                 const SizedBox(height: 30,),
-                const BoldText('Bingo FE', color: Colors.red, fontSize: 28,),
+                const BoldText('Bingo', color: Colors.red, fontSize: 28,),
                 const SizedBox(height: 10,),
-                const RomanText('by SPC & PR', color: Colors.grey, fontSize: 12,),
+                const RomanText('BY PR & SPC', color: Colors.grey, fontSize: 12,),
                 const SizedBox(height: 30,),
                 SizedBox(
                   height: 3,

@@ -1,5 +1,6 @@
 import 'package:bingo_fe/navigation/mixin_route.dart';
 import 'package:bingo_fe/services/models/winner_message_socket.dart';
+import 'package:bingo_fe/widget/common/scrolling_flexible_loose_widget.dart';
 import 'package:bingo_fe/widget/common/top_rounded_container.dart';
 import 'package:bingo_fe/widget/texts/bold_text.dart';
 import 'package:bingo_fe/widget/texts/roman_text.dart';
@@ -51,29 +52,32 @@ class WinnersBottomSheet extends StatelessWidget with RouteMixin{
                   ],
                 ),
                 const SizedBox(height: 20,),
-                ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (_, index) {
-                    final key = sortedKeys[index];
-                    var users = '';
-                    winners[key]?.forEach((username) {
-                      users += '${username == userNickname ? 'YOU' : username}, ';
-                    });
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          BoldText(key.name),
-                          RomanText(': ${users.substring(0, users.length - 2)}'),
-                        ],
-                      ),
-                    );
-                  },
-                  itemCount: sortedKeys.length,
+                ScrollingFlexibleLooseWidget(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    physics: const BouncingScrollPhysics(),
+                    itemBuilder: (_, index) {
+                      final key = sortedKeys[index];
+                      var users = '';
+                      winners[key]?.forEach((username) {
+                        users += '${username == userNickname ? 'YOU' : username}, ';
+                      });
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            BoldText(key.name, color: users.isNotEmpty ? Colors.black : Colors.grey,),
+                            users.isNotEmpty ? RomanText(': ${users.substring(0, users.length - 2)}') :
+                            const RomanText(': not won yet', color: Colors.grey,),
+                          ],
+                        ),
+                      );
+                    },
+                    itemCount: sortedKeys.length,
+                  )
                 )
               ],
             ),

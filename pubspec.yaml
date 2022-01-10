@@ -42,6 +42,9 @@ dependencies:
   enum_to_string: ^2.0.1
   lottie: ^1.2.1
   shared_preferences: ^2.0.11
+  fluttertoast: ^8.0.8
+  url_strategy: ^0.2.0
+  universal_html: ^2.0.8
 
 dev_dependencies:
   flutter_test:

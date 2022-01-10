@@ -4,6 +4,7 @@ import 'package:bingo_fe/services/get_it.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'configure_not_web.dart' if (dart.library.html) 'configure_web.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +19,7 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));
-
+  configureApp();
   runApp(const BingoFeApp());
 }
 
@@ -29,7 +30,7 @@ class BingoFeApp extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Bingo FE',
+      title: 'Bingo - PR & SPC',
       theme: ThemeData(
         primarySwatch: Colors.red,
         visualDensity: VisualDensity.adaptivePlatformDensity,
