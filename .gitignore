@@ -44,3 +44,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+/npm-web/node_modules
+/npm-web/package-lock.json
