@@ -34,10 +34,18 @@ class Routes {
       if(ModalRoute.of(context)?.settings.arguments is List<CardModel>){
         cards = ModalRoute.of(context)?.settings.arguments as List<CardModel>;
       }
-      return ChangeNotifierProvider(
-        create: (_) => GameNotifier(cards),
-        child: const GameScreen(),
-      );
+      if(cards.isNotEmpty){
+        return ChangeNotifierProvider(
+          create: (_) => GameNotifier(cards),
+          child: const GameScreen(),
+        );
+
+      }else{
+        return ChangeNotifierProvider(
+          create: (_) => SplashNotifier(),
+          child: const SplashScreen(),
+        );
+      }
     },
 
     RouteEnum.selectCards.name! : (context) {
@@ -45,16 +53,37 @@ class Routes {
       if(ModalRoute.of(context)?.settings.arguments is BingoPaper){
         bingoPaper = ModalRoute.of(context)?.settings.arguments as BingoPaper;
       }
-      return ChangeNotifierProvider(
-        create: (_) => SelectCardsNotifier(bingoPaper),
-        child: const SelectCardsScreen(),
-      );
+
+      if(bingoPaper != null){
+        return ChangeNotifierProvider(
+          create: (_) => SelectCardsNotifier(bingoPaper),
+          child: const SelectCardsScreen(),
+        );
+      }else{
+        return ChangeNotifierProvider(
+          create: (_) => SplashNotifier(),
+          child: const SplashScreen(),
+        );
+      }
     },
 
-    RouteEnum.summary.name! : (context) => ChangeNotifierProvider(
-        create: (_) => SummaryNotifier(),
-        child: const SummaryScreen(),
-    ),
+    RouteEnum.summary.name! : (context) {
+      bool fromGameCorrectly = false;
+      if(ModalRoute.of(context)?.settings.arguments is bool){
+        fromGameCorrectly = ModalRoute.of(context)?.settings.arguments as bool;
+      }
+      if(fromGameCorrectly){
+        return ChangeNotifierProvider(
+          create: (_) => SummaryNotifier(),
+          child: const SummaryScreen(),
+        );
+      }else{
+        return ChangeNotifierProvider(
+          create: (_) => SplashNotifier(),
+          child: const SplashScreen(),
+        );
+      }
+    },
   };
 }
 

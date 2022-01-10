@@ -2,7 +2,7 @@
     package="it.spc.pr.bingo_fe">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="Bingo FE"
+        android:label="Bingo - PR &amp; SPC"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

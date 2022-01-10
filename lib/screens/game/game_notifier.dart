@@ -10,7 +10,12 @@ import 'package:bingo_fe/services/models/message_socket.dart';
 import 'package:bingo_fe/services/models/update_user_message_socket.dart';
 import 'package:bingo_fe/services/models/winner_message_socket.dart';
 import 'package:bingo_fe/services/socket/socket_helper.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:flutter/services.dart';
+import 'package:universal_html/html.dart' as html;
 
 class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   int? _lastExtractedNumber;
@@ -94,6 +99,11 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
       onWinnerEvent: _onWinnerEvent,
       onUpdatedCard: _onUpdatedCard
     );
+
+    if(kIsWeb){
+      html.window.onUnload.listen((event) => leaveRoomAndDisconnectSocket());
+    }
+
     connectAndJoinRoomSocket();
   }
 
@@ -113,7 +123,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   void _onRoomServiceMessages(dynamic data){
     try{
       final message = MessageSocket.fromJson(data);
-      if(showRoomMessage){
+      if(showRoomMessage && !_tombolaWon){
         showMessage(message.msg ?? '');
       }
       _updateNumberUserConnected();
@@ -155,13 +165,14 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
         showMessage(
             '${messageString.substring(0, messageString.length - 2)} won ${message.winType?.toString().split('.')[1]}!',
             messageType: MessageTypeEnum.win,
-            isBold: containsCurrentUser
+            isBold: containsCurrentUser,
+            durationSec: 4
         );
       }
 
       if(message.winType == WinTypeEnum.TOMBOLA){
         _tombolaWon = true;
-        navigateTo(RouteEnum.summary, shouldClearAll: true);
+        navigateTo(RouteEnum.summary, shouldClearAll: true, arguments: true);
       }else{
         _getWinnersOfRoom();
       }
@@ -184,7 +195,11 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   }
 
   void openWinners(){
-    navigateToBottomSheet(WinnersBottomSheet(winners: winners, userNickname: nickname,));
+    final winnersToPass = <WinTypeEnum, List<String>>{for (var winEnum in WinTypeEnum.values.where((w) => w != WinTypeEnum.NONE)) winEnum: []};
+    winners.forEach((key, value) {
+      winnersToPass[key] = value;
+    });
+    navigateToBottomSheet(WinnersBottomSheet(winners: winnersToPass, userNickname: nickname,));
   }
 
   void openPlayers() {
@@ -206,6 +221,21 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
     saveRoomInfo(null, isSilent: true);
     saveIsHost(false, isSilent: true);
     navigateTo(RouteEnum.home, shouldClearAll: true);
+  }
+
+  void onCopyTapRoomCode(){
+    Clipboard.setData(ClipboardData(text: _roomCode)).then((_) =>
+      Fluttertoast.showToast(
+        msg: "Copied to clipboard!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.TOP,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.grey.shade100,
+        textColor: Colors.black,
+        fontSize: 14.0,
+        webPosition: "center",
+        webBgColor: "#F5F5F5"
+    ));
   }
 
   leaveRoomAndDisconnectSocket(){

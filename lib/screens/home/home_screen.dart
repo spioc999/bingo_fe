@@ -1,4 +1,5 @@
 import 'package:bingo_fe/base/base_widget.dart';
+import 'package:bingo_fe/helpers/image_helper.dart';
 import 'package:bingo_fe/screens/home/home_notifier.dart';
 import 'package:bingo_fe/widget/buttons/app_button.dart';
 import 'package:bingo_fe/widget/common/app_form_field.dart';
@@ -51,15 +52,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     Colors.red.withOpacity(0.8)
                   ]
                 ),
-                borderRadius: const BorderRadius.only(
-                    bottomRight: Radius.circular(25.0)),
+                borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(25.0)),
               ),
               width: MediaQuery.of(context).size.width,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(height: 10 + MediaQuery.of(context).viewPadding.top,),
-                  const BoldText('BINGO', fontSize: 26),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ImageHelper.getPng('logo', height: 40, fit: BoxFit.fitHeight),
+                      const SizedBox(width: 10,),
+                      const BoldText('BINGO', fontSize: 26),
+                    ],
+                  ),
                   const SizedBox(height: 20,),
                 ],
               ),
@@ -82,19 +91,54 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const RomanText('Insert a nickname to identify you', color: Colors.black87),
-          const SizedBox(height: 10,),
           AppFormFieldWidget(
             controller: notifier.nicknameController,
             focusNode: _nicknameNode,
             prefixIcon: Icons.account_circle_outlined,
-            hintText: 'Nickname',
+            hintText: 'Nickname*',
             onChanged: (value) => notifier.onNicknameChanged(value),
           ),
-          const SizedBox(height: 5,),
-          const RomanText('This field is mandatory.', fontSize: 12, color: Colors.grey,),
           const SizedBox(height: 50,),
-          const RomanText('Insert the 5 letters room\'s code', color: Colors.black87,),
+          const BoldText('CREATE ROOM', color: Colors.black87, fontSize: 18,),
+          const SizedBox(height: 10,),
+          AppFormFieldWidget(
+            controller: notifier.roomNameController,
+            focusNode: _roomNameNode,
+            prefixIcon: Icons.drive_file_rename_outline,
+            hintText: 'Room name',
+            onChanged: (value) => notifier.onRoomNameChanged(value),
+          ),
+          const SizedBox(height: 10,),
+          AppButton(
+            text: 'Start new room',
+            enabled: notifier.canStartNewRoom,
+            onTap: () {FocusScope.of(context).requestFocus(FocusNode()); notifier.onTapStartNewRoom();},
+            isLoading: notifier.startRoomLoading,
+          ),
+          const SizedBox(height: 30,),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Expanded(child: Divider(
+                  color: Colors.grey,
+                )),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15.0),
+                  child: RomanText('or', fontSize: 12, color: Colors.grey,),
+                ),
+                Expanded(
+                  child: Divider(
+                    color: Colors.grey
+                  )
+                )
+              ],
+            ),
+          ),
+          const SizedBox(height: 30,),
+          const BoldText('JOIN ROOM', color: Colors.black87, fontSize: 18,),
           const SizedBox(height: 10,),
           AppFormFieldWidget(
             controller: notifier.roomCodeController,
@@ -106,43 +150,11 @@ class _HomeScreenState extends State<HomeScreen> {
             onChanged: (value) => notifier.onRoomCodeChanged(value),
           ),
           const SizedBox(height: 10,),
-          AppButton(text: 'Connect', enabled: notifier.canConnectToRoom,
-            onTap: () {FocusScope.of(context).requestFocus(FocusNode()); notifier.onTapConnectRoom();}, isLoading: notifier.connectToRoomLoading,),
-            const SizedBox(height: 30,),
-            Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Row(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-            Expanded(child: Divider(
-            color: Colors.grey,
-            )),
-            Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            child: RomanText('or', fontSize: 12, color: Colors.grey,),
-                ),
-                Expanded(child: Divider(
-                    color: Colors.grey
-                ))
-              ],
-            ),
+          AppButton(text: 'Connect',
+            enabled: notifier.canConnectToRoom,
+            onTap: () {FocusScope.of(context).requestFocus(FocusNode()); notifier.onTapConnectRoom();},
+            isLoading: notifier.connectToRoomLoading,
           ),
-          const SizedBox(height: 30,),
-          const RomanText('Insert a name associated to room', color: Colors.black87,),
-          const SizedBox(height: 10,),
-          AppFormFieldWidget(
-            controller: notifier.roomNameController,
-            focusNode: _roomNameNode,
-            prefixIcon: Icons.drive_file_rename_outline,
-            hintText: 'Room name',
-            onChanged: (value) => notifier.onRoomNameChanged(value),
-          ),
-          const SizedBox(height: 10,),
-          AppButton(text: 'Start new room', enabled: notifier.canStartNewRoom,
-            onTap: () {FocusScope.of(context).requestFocus(FocusNode()); notifier.onTapStartNewRoom();}, isLoading: notifier.startRoomLoading,),
-          const SizedBox(height: 10,),
-          const RomanText('You will be the host of the room', fontSize: 12, color: Colors.grey,),
           const SizedBox(height: 10,),
         ],
       ),

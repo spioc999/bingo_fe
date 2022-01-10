@@ -1,11 +1,11 @@
 {
-    "name": "Bingo FE",
-    "short_name": "Bingo FE",
+    "name": "Bingo - PR & SPC",
+    "short_name": "Bingo - PR & SPC",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Exam project for \"Programming\" university course @ UniCampus Rome - Developed by SPC & PR",
+    "description": "Exam project for \"Programming\" university course @ UniCampus Rome - Developed by Paolo Ruggirello & Simone Pio Caronia",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -73,8 +73,8 @@ class _SelectCardsScreenState extends State<SelectCardsScreen> {
                   Colors.red.withOpacity(0.8)
                 ]
             ),
-            borderRadius: const BorderRadius.only(
-                bottomRight: Radius.circular(25.0)),
+            borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(25.0)),
           ),
           width: MediaQuery.of(context).size.width,
           child: Column(

@@ -1,6 +1,6 @@
-# Bingo - FE
+# Bingo - PR & SPC - front end module
 
-Exam project for "Programming" university course @ UniCampus Rome - Developed by SPC & PR
+Exam project for "Programming" university course @ UniCampus Rome - Developed by Paolo Ruggirello & Simone Pio Caronia
 
 ## Getting Started
 
@@ -16,5 +16,5 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 
-###Building dnd run the project
+## Building dnd run the project
 You can find building and install instructions inside bingo-core>README.md file.

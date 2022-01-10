@@ -82,8 +82,8 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
                   Colors.red.withOpacity(0.8)
                 ]
             ),
-            borderRadius: const BorderRadius.only(
-                bottomRight: Radius.circular(25.0)),
+            borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(25.0)),
           ),
           width: MediaQuery.of(context).size.width,
           child: Column(
@@ -92,7 +92,22 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
               SizedBox(height: 10 + MediaQuery.of(context).viewPadding.top,),
               BoldText(notifier.roomName, fontSize: 26),
               const SizedBox(height: 8,),
-              BoldText('Room code: ${notifier.roomCode}', fontSize: 14),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  BoldText('Room code: ${notifier.roomCode}', fontSize: 14),
+                  const SizedBox(width: 5,),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    child: const Padding(
+                      padding: EdgeInsets.all(4.0),
+                      child: Icon(Icons.copy_outlined, size: 20,),
+                    ),
+                    onTap: () => notifier.onCopyTapRoomCode(),
+                  )
+                ],
+              ),
               const SizedBox(height: 15,),
             ],
           ),
@@ -110,16 +125,13 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver{
                 const SizedBox(width: 10,),
                 RomanText('${notifier.nickname}${notifier.isHost ? ' (HOST)' : ''}', color: Colors.black87,),
                 const Spacer(),
-                Visibility(
-                  visible: notifier.winners.isNotEmpty,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    child: const RomanText(
-                      'WINNERS',
-                      decoration: TextDecoration.underline,
-                    ),
-                    onTap: () => notifier.openWinners(),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  child: const RomanText(
+                    'WINNERS',
+                    decoration: TextDecoration.underline,
                   ),
+                  onTap: () => notifier.openWinners(),
                 ),
                 const SizedBox(height: 10, child: VerticalDivider(color: Colors.black45,)),
                 GestureDetector(
