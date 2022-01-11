@@ -13,6 +13,11 @@ import 'package:bingo_fe/services/models/bingo_paper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/// [Routes] is the class which has the [routes] map, useful to register all routes at the app startup.
+/// To avoid errors in WEB APP, if nothing is passed during navigation (use case: refresh web page or go in
+/// specific screen using url bar) the app redirect to [SplashScreen] which is able to retrieve a previous game
+/// if still in progress.
+
 class Routes {
 
   static String get initial => RouteEnum.splash.name!;

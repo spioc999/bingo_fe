@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:bingo_fe/navigation/routes.dart';
 
+/// [RouteMixin] is the mixin whose task is to give centralized functionalities to navigate in app.
+
 mixin RouteMixin {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 

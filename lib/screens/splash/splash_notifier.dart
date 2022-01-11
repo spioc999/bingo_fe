@@ -12,7 +12,7 @@ class SplashNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
 
   init() async{
     showLoading();
-    await Future.delayed(const Duration(milliseconds: 1500), (){});
+    await Future.delayed(const Duration(milliseconds: 500), (){});
 
     final roomInfoResponse = await getRoomInfo(isSilent: true);
     final nicknameResponse = await getNickname(isSilent: true);
