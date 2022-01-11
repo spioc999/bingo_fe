@@ -10,6 +10,14 @@ class SplashNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
 
   SplashNotifier();
 
+  /// [init] method is called after page has been initialized.
+  /// It checks if roomInfo and nickname are saved in app. If so, it could be possible
+  /// to retrieve an ongoing game session. So after that, if [getUserCards] returns not empty
+  /// list of cards assigned to user for that room and [getWinnersOfRoom] has not tombola
+  /// winners (in this case the game is finished), so the confirmation [YesNoBottomSheet] is
+  /// shown and the user can select if continue the previous game or not.
+  /// Otherwise the app follows the normal flow, going to [RouteEnum.home]
+
   init() async{
     showLoading();
     await Future.delayed(const Duration(milliseconds: 500), (){});
@@ -19,8 +27,8 @@ class SplashNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
 
     if (!roomInfoResponse.hasError && !nicknameResponse.hasError) {
 
-      final userCards = await getUserCards(roomInfoResponse.result?.roomCode ?? '', nicknameResponse.result ?? '');
-      final winnersResponse = await getWinnersOfRoom(roomInfoResponse.result?.roomCode ?? '', isSilent: false);
+      final userCards = await getUserCards(roomInfoResponse.result?.roomCode ?? '', nicknameResponse.result ?? '', isSilent: true);
+      final winnersResponse = await getWinnersOfRoom(roomInfoResponse.result?.roomCode ?? '', isSilent: true);
 
       if (!userCards.hasError
           && (userCards.result?.cards?.isNotEmpty ?? false)

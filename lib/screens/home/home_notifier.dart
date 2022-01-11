@@ -19,6 +19,9 @@ class HomeNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
 
   HomeNotifier();
 
+  /// [init] method is called after page has been initialized.
+  /// It retrieves, if present, the previous [nickname] inserted by user.
+
   init() async{
     final nicknameInCache = await getNickname();
     if(!nicknameInCache.hasError){
@@ -43,6 +46,12 @@ class HomeNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
     notifyListeners();
   }
 
+  /// [onTapConnectRoom] method is called after tapping the proper button.
+  /// It tries to join room and in case takes the user to the [RouteEnum.selectCards]
+  /// with the bingo paper just received.
+  /// NOTICE THAT: a joining player can't be the HOST. In fact, [saveIsHost] is called
+  /// passing false as parameters.
+
   onTapConnectRoom() async{
     _hasTappedConnect = true;
     showLoading();
@@ -60,6 +69,12 @@ class HomeNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
     hideLoading();
     navigateTo(RouteEnum.selectCards, shouldReplace: true, arguments: response.result?.bingoPaper);
   }
+
+  /// [onTapStartNewRoom] method is called after tapping the proper button.
+  /// It creates a new room and as response is received the bank bingo paper.
+  /// The info about room is also retrieved. Important is the hostUniqueCode, which
+  /// will let the user extract numbers.
+  /// NOTICE THAT: the player is the HOST
 
   onTapStartNewRoom() async{
     _hasTappedStart = true;

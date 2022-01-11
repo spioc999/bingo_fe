@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:bingo_fe/navigation/routes.dart';
 
 /// [RouteMixin] is the mixin whose task is to give centralized functionalities to navigate in app.
+///
+/// [navigateTo] method permits to go into another screen registered during app startup
+/// [pop] method removes the current page from tree and it goes back to the previous page
+/// [navigateToBottomSheet] method generates a partial overlay screen coming from bottom
+/// [isCurrent] returns if the route passed is the current one
 
 mixin RouteMixin {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

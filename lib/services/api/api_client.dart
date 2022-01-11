@@ -1,9 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:bingo_fe/navigation/mixin_route.dart';
-import 'package:bingo_fe/navigation/routes.dart';
 
-class ApiClient with RouteMixin {
+/// [ApiClient] is the custom implementation for calling HTTP services.
+/// The client used is [Dio], a powerful HTTP client.
+/// In the constructor, [Interceptor]s are added to the client in order to
+/// generate logs and if needed handle the navigation based on error received.
+
+class ApiClient {
   final Map<String, String> headers = {};
   final String basePath;
   final Dio dio = Dio();
@@ -107,6 +110,10 @@ class ApiClient with RouteMixin {
         cancelToken: cancelToken
     );
   }
+
+  /// [_makeRequest] is called by each HTTP request methods above, by passing the right [method] string.
+  /// The required values are: [endPath] string and [converter] function , callback called
+  /// to convert the data received.
 
   Future<T> _makeRequest<T>(String endPath, String method, {
       String? token,

@@ -37,6 +37,13 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
 
   GameNotifier(this.cards);
 
+  /// [init] method is called after page has been initialized.
+  /// It retrieves [_isHost], [_nickname], [_roomCode], [_roomName] and [_hostUniqueCode] from cache.
+  /// It calls the method to connect and add listeners to socket.
+  ///
+  /// [_getLastExtractedNumber] and [_getWinnersOfRoom] are called in order to retrieve the previous situation
+  /// in case the user is returning on this screen after he has closed app or left it in background.
+
   init() async{
     showLoading();
     _isHost = (await isHostUser(isSilent: true)).result ?? false;
@@ -148,6 +155,13 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
       }
     }catch(_){}
   }
+
+  /// [_onWinnerEvent] method is called after event [SocketEventTypeEnum.winnerEvent] is received.
+  /// The data contains [WinTypeEnum] and list of [WinnerElement] (user and winner card).
+  /// The method composes the string to be displayed in the green [SnackBar].
+  ///
+  /// If the [WinTypeEnum.TOMBOLA] is received, app navigates to summary screen, otherwise the
+  /// [_getWinnersOfRoom] method is called in order to update the info about WINNERS.
 
   void _onWinnerEvent(dynamic data){
     try{

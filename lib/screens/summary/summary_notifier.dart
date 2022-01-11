@@ -19,6 +19,9 @@ class SummaryNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
     navigateTo(RouteEnum.home, shouldClearAll: true);
   }
 
+  /// [init] method is called after page has been initialized.
+  /// It retrieves all the info about the just ended game.
+
   init() async{
     showLoading();
     _isHost = (await isHostUser(isSilent: true)).result ?? false;
@@ -52,6 +55,10 @@ class SummaryNotifier extends BaseNotifier with RouteMixin, ServiceMixin{
   String get roomName => _roomName ?? '';
   String get roomCode => _roomCode ?? '';
   String get nickname => _nickname ?? '';
+
+  /// [tombolaWinners] method is the string containing all TOMBOLA winners.
+  /// Notice that if the nickname of the current user is present, it's replaced with YOU
+
   String? get tombolaWinners {
     var winnersList = List.from(winners[WinTypeEnum.TOMBOLA] ?? []);
     if(winnersList.isNotEmpty){

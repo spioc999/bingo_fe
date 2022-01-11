@@ -3,6 +3,7 @@ import 'package:bingo_fe/mixins/mixin_service.dart';
 import 'package:bingo_fe/models/card_model.dart';
 import 'package:bingo_fe/navigation/mixin_route.dart';
 import 'package:bingo_fe/navigation/routes.dart';
+import 'package:bingo_fe/services/models/bingo_card.dart';
 import 'package:bingo_fe/services/models/bingo_paper.dart';
 
 class SelectCardsNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
@@ -26,6 +27,9 @@ class SelectCardsNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
     notifyListeners();
   }
 
+  /// [_convertBingoCardsToCardModels] converts the [BingoCard] in [BingoPaper] received
+  /// after joining room into [CardModel], model oriented to visualization of cards.
+
   void _convertBingoCardsToCardModels() {
     _cards = [];
     if(_bingoPapers.isNotEmpty){
@@ -48,6 +52,9 @@ class SelectCardsNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
     }
     notifyListeners();
   }
+
+  /// [loadNewBingoPaper] requests a new [BingoPaper] associated to the [roomCode], excluding the
+  /// ones received yet.
 
   loadNewBingoPaper() async {
     _hasTappedLoadMore = true;

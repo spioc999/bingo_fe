@@ -14,9 +14,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 /// [Routes] is the class which has the [routes] map, useful to register all routes at the app startup.
+///
+/// Every screen is created with the [ChangeNotifierProvider], a binding component that permits to rebuild the
+/// UI after notify is sent.
+/// The notifier can be retrieved in screen class by using [Consumer]
+/// or [Provider.of] in order to call methods or get data.
+///
 /// To avoid errors in WEB APP, if nothing is passed during navigation (use case: refresh web page or go in
 /// specific screen using url bar) the app redirect to [SplashScreen] which is able to retrieve a previous game
-/// if still in progress.
+/// if still in progress with loading UI.
 
 class Routes {
 
