@@ -12,6 +12,14 @@ import 'package:bingo_fe/services/models/winners_response.dart';
 import 'package:bingo_fe/services/service_response.dart';
 import 'package:dio/dio.dart';
 
+
+/// [ApiService] is the class containing all the methods to invoke the BE endpoints.
+/// Each method returns a [ServiceResponse] object, with result if all went correctly.
+/// Otherwise in the response object, a [ServiceError] object is created and added to response.
+///
+/// In this way, the notifier that wants to retrieve information, has a unified interface
+/// for all the data to verify if error occurred or not.
+
 class ApiService{
   final ApiClient client;
 

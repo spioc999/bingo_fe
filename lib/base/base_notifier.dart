@@ -4,6 +4,10 @@ import 'package:bingo_fe/widget/texts/roman_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+/// [BaseNotifier] is the super class for ViewModel of each screens.
+/// It contains the base method and components for screens, such as [showLoading], [hideLoading], [showMessage] and so on...
+/// It extends [ChangeNotifier] which provides a change notification API method ([notifyListeners]) to notify the screen
+
 class BaseNotifier extends ChangeNotifier{
   CancelToken cancelToken = CancelToken();
   bool isLoading = false;

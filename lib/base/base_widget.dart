@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+/// [BaseWidget] is a [StatelessWidget] used as base for each screen.
+/// It is wrapped by a [WillPopScope] widget, which permits to handle the tap on physical back.
+/// Inside of that there is an [AnnotatedRegion] widget, whose task is to define the style for the
+/// status bar of the smartphone. Then, as child of the last one, there is a [Scaffold], widget
+/// full of API to design the screen with [bottomNavigationBar] or [floatingActionButton] and so on.
+/// To avoid components invisible due to notch, [SafeArea] widget adds if booleans values [safeAreaBottom] and
+/// [safeAreaTop] an internal padding.
+
 class BaseWidget extends StatelessWidget {
 
   final Widget child;
@@ -42,16 +50,14 @@ class BaseWidget extends StatelessWidget {
           bottomNavigationBar: bottomNavigationBar,
           floatingActionButton: floatingActionButton,
           floatingActionButtonLocation: floatingActionButtonLocation,
-          body: Center(
-            child: SafeArea(
-              top: safeAreaTop,
-              bottom: safeAreaBottom,
-              child: Container(
-                color: backgroundColorBody,
-                width: double.infinity,
-                height: double.infinity,
-                child: child,
-              ),
+          body: SafeArea(
+            top: safeAreaTop,
+            bottom: safeAreaBottom,
+            child: Container(
+              color: backgroundColorBody,
+              width: double.infinity,
+              height: double.infinity,
+              child: child,
             ),
           ),
         ),

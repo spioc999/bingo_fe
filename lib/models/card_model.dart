@@ -8,6 +8,10 @@ class CardModel{
 
   CardModel(this.columns);
 
+  /// [CardModel.fromBingoCard] is a converting method which from [BingoCard], response of service,
+  /// creates a [CardModel] object. The last one is oriented to visualization,
+  /// transforming rows of numbers in columns of numbers.
+
   CardModel.fromBingoCard(BingoCard card){
     id = card.id;
     if(card.cardNumbers != null && card.cardNumbers!.isNotEmpty){

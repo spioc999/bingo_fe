@@ -11,6 +11,11 @@ import 'package:bingo_fe/services/models/winners_response.dart';
 import 'package:bingo_fe/services/service_response.dart';
 import 'package:get_it/get_it.dart';
 
+/// [ServiceMixin] is the mixin whose task is to retrieve the instances of [apiService] and [cacheService]
+/// thanks to [GetIt] package and transparently to Notifiers makes both API and CACHE calls to retrieve data.
+/// It can be imported by only subclasses of [BaseNotifier] in order to handle also the showing and dismissing
+/// of loading UI.
+
 mixin ServiceMixin on BaseNotifier {
 
   final ApiService apiService = GetIt.instance<ApiService>();
@@ -125,7 +130,7 @@ mixin ServiceMixin on BaseNotifier {
   }
 
   ///---------------------------------------------------------------------
-  ///ERROR AND SUCCESS HELPER
+  ///ERROR HELPER
   String getErrorTextByServiceError(ServiceError error){
     switch(error.errorCode){
       case 404:

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// [ImageHelper] is a class that centralized the retrieving of images from assets folder.
+
 class ImageHelper {
 
   static Widget getPng (String img,

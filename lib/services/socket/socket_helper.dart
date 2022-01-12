@@ -2,6 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+/// [SocketHelper] is the helper class that provides functionalities to [createSocket],
+/// [joinRoomSocket] by emitting a [SocketEventTypeEnum.joinRoom] event, [leaveRoomSocket] by
+/// emitting a [SocketEventTypeEnum.leaveRoom] event and [addListenersOnSocket] for all the
+/// [SocketEventTypeEnum] type of events.
+///
+/// [createSocket] creates a [IO.io] socket object and specifies the protocol
+/// based on platform: ANDROID/iOS => "websocket" | WEB => "polling" (default)
+
 class SocketHelper {
 
   static Socket createSocket(String url){

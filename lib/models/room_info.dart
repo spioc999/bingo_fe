@@ -1,3 +1,6 @@
+/// [RoomInfo] is wrapper class that permits to save all the information
+/// received for room in one object stored in cache (thanks to fromJson and toJson methods)
+
 class RoomInfo{
   String? roomCode;
   String? roomName;
