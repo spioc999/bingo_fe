@@ -38,7 +38,7 @@ So if you want to add new screen, please add a new enum value (and its name into
 
 
 ### API and Socket.IO
-***API***
+***API***:
 The api client used in app is [dio](https://pub.dev/packages/dio), a powerful Dart HTTP client.
 **ApiClient**, located in *"lib/services/api"* folder, is the custom client, which permits to invoke all HTTP methods, passing the right parameters.
 All endpoints called by app are stored in the **ApiService** class, located in *"lib/services/api"* folder. Each response is wrapped in a *ServiceResponse* object. If another endpoint is needed, please add a new method in the class just mentioned.
@@ -63,7 +63,7 @@ Future<ServiceResponse<OnlinePlayersResponse>> getOnlinePlayersRoom(String roomC
   }
 ```
 
-***Socket.IO***
+***Socket.IO***:
 Socket is used in app in order to notify other users during game session about new number extracted, winners, etc...
 The client is [socket_io_client](https://pub.dev/packages/socket_io_client), and you can create an instance of it by using the **SocketHelper** class, located in *"lib/services/socket"*. It provides methods to add listeners to socket events.
 
@@ -127,7 +127,7 @@ flutter build web
 Inside the *"/npm-web"* folder, you can find the last web app version.
 It's supported by a simple NODE.JS EXPRESS web server. Basically, node.js web app redirects all routes to the flutter app.
 
-**RUN**
+**RUN**:
 To run the web app, move inside the folder and just run these 2 commands:
 ```sh
 npm install
