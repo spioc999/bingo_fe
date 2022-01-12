@@ -114,6 +114,7 @@ class ApiClient {
   /// [_makeRequest] is called by each HTTP request methods above, by passing the right [method] string.
   /// The required values are: [endPath] string and [converter] function , callback called
   /// to convert the data received.
+  /// If [token] is present, it adds it to [headers] before calling [dio.request].
 
   Future<T> _makeRequest<T>(String endPath, String method, {
       String? token,

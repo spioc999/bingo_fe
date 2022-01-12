@@ -5,6 +5,17 @@ import 'package:bingo_fe/services/service_response.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// [CacheService] is the class containing all the methods retrieve data from local storage.
+/// Each method returns a [ServiceResponse] object, with result if all went correctly.
+/// Otherwise in the response object, a [ServiceError] object is created and added to response.
+///
+/// As web application runs within not secured web server, it was needed to use different package
+/// for cache. For Android and iOS, [FlutterSecureStorage] is used and for WEB [SharedPreferences].
+///
+/// All writing, reading and deleting actions passed throw the custom implementation methods
+/// [_read], [_write] and [_delete] which verify the type of [client] object and invoke the
+/// right API.
+
 class CacheService{
   static const int cacheNotFoundCode = 404;
   static const String cacheNotFoundMessage = "Not found";
