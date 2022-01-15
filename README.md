@@ -18,7 +18,7 @@ Notifiers have to extend the **BaseNotifier** class, located into the *"lib/base
 **BaseWidget** is a useful widget that contains the base components to build correctly the screen.
 
 Example *build(BuildContext)* method with Consumer and BaseWidget:
-```
+```  
 Widget build(BuildContext context) {
   return Consumer<BaseNotifier>(
     builder: (_, notifier, __) => BaseWidget(
