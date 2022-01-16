@@ -8312,7 +8312,7 @@ m=new A.V4($,new A.Fn(A.b([],t.lC),new A.w3(),new A.w3(),new A.w3()),$,new A.UV(
 l=A.axQ()
 m.Me$=l
 m.Mf$=new A.Tg(A.b([],t.Hh))
-q=new A.Sl(A.t(n,n),"https://bingo-pr-spc.online/api","https://51.77.137.143:8080",m)
+q=new A.Sl(A.t(n,n),"https://bingo-pr-spc.online/api","https://51.77.137.143:8080/socket",m)
 q.a1X()
 o.a=null
 s=2

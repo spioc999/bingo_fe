@@ -19,7 +19,7 @@ Future<void> registerServices() async{
 
   final apiClient = ApiClient(
     basePath: "https://bingo-pr-spc.online/api",
-    socketPath: "https://51.77.137.143:8080",
+    socketPath: "https://51.77.137.143:8080/socket",
   );
   final Object cacheClient;
 
