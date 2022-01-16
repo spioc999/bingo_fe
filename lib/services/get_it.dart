@@ -17,7 +17,7 @@ GetIt it = GetIt.instance;
 
 Future<void> registerServices() async{
 
-  final apiClient = ApiClient(basePath: "https://51.77.137.143:8080");
+  final apiClient = ApiClient(basePath: "http://51.77.137.143:8080");
   final Object cacheClient;
 
   if(kIsWeb){
