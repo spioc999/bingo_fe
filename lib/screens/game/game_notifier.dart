@@ -98,7 +98,7 @@ class GameNotifier extends BaseNotifier with ServiceMixin, RouteMixin{
   }
 
   void _addListenersSocketAndJoin() {
-    socket = SocketHelper.createSocket(apiService.client.basePath);
+    socket = SocketHelper.createSocket(apiService.client.socketPath);
     SocketHelper.addListenersOnSocket(socket,
       onErrorMessage: _onErrorMessageSocket,
       onRoomServiceMessages: _onRoomServiceMessages,

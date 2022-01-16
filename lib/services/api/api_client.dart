@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 class ApiClient {
   final Map<String, String> headers = {};
   final String basePath;
+  final String socketPath;
   final Dio dio = Dio();
 
   static const String get = 'GET';
@@ -19,6 +20,7 @@ class ApiClient {
 
   ApiClient({
     required this.basePath,
+    required this.socketPath,
   }) {
     _initInterceptors();
   }

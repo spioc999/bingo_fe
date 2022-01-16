@@ -8284,9 +8284,11 @@ aeR:function aeR(a){this.a=a},
 aeQ:function aeQ(a){this.a=a},
 aeP:function aeP(a,b){this.a=a
 this.b=b},
-Sl:function Sl(a,b,c){this.a=a
-this.b=b
-this.c=c},
+Sl:function Sl(a,b,c,d){var _=this
+_.a=a
+_.b=b
+_.c=c
+_.d=d},
 Sm:function Sm(){},
 Sn:function Sn(a){this.a=a},
 So:function So(a){this.a=a},
@@ -8310,7 +8312,7 @@ m=new A.V4($,new A.Fn(A.b([],t.lC),new A.w3(),new A.w3(),new A.w3()),$,new A.UV(
 l=A.axQ()
 m.Me$=l
 m.Mf$=new A.Tg(A.b([],t.Hh))
-q=new A.Sl(A.t(n,n),"https://bingo-pr-spc.online/api",m)
+q=new A.Sl(A.t(n,n),"https://bingo-pr-spc.online/api","http://51.77.137.143:8080",m)
 q.a1X()
 o.a=null
 s=2
@@ -38639,7 +38641,7 @@ o=A.am(new A.ak(m,new A.Y1(),o),!0,o.i("aY.E"))
 m=o}}p.db=m==null?A.b([],t.bg):m
 case 1:return A.C(q,r)}})
 return A.D($async$pi,r)},
-XL(){var s,r=this,q="query",p=r.eS$.a.b,o=A.a8(["autoConnect",!1],t.N,t.z),n=A.kv(p),m=n.gd1()+"://"+n.gfc(n)+":"+n.gkw(n),l=n.gd6(n),k=$.agT.al(0,m)&&$.agT.h(0,m).c.al(0,l),j=J.f(o.h(0,"forceNew"),!0)||J.f(o.h(0,"force new connection"),!0)||!1===o.h(0,"multiplex")||k,i=A.bt("io")
+XL(){var s,r=this,q="query",p=r.eS$.a.c,o=A.a8(["autoConnect",!1],t.N,t.z),n=A.kv(p),m=n.gd1()+"://"+n.gfc(n)+":"+n.gkw(n),l=n.gd6(n),k=$.agT.al(0,m)&&$.agT.h(0,m).c.al(0,l),j=J.f(o.h(0,"forceNew"),!0)||J.f(o.h(0,"force new connection"),!0)||!1===o.h(0,"multiplex")||k,i=A.bt("io")
 if(j){$.atS().aF(B.m,"ignoring socket cache for "+p,null,null)
 i.b=A.aol(o,p)}else{s=$.agT.h(0,m)
 if(s==null){p=A.aol(o,p)
@@ -39423,7 +39425,7 @@ a2o(a,b,c,d,e,f,g){return this.pd(a,b,null,c,d,e,f,g)},
 a2p(a,b,c,d,e,f,g,h,i){var s=0,r=A.E(i),q,p=this,o,n
 var $async$pd=A.A(function(j,k){if(j===1)return A.B(k,r)
 while(true)switch(s){case 0:s=3
-return A.y(p.c.CX(0,p.b+a,d,c,A.aA5(p.a,b),f,t.z),$async$pd)
+return A.y(p.d.CX(0,p.b+a,d,c,A.aA5(p.a,b),f,t.z),$async$pd)
 case 3:o=k
 n=o.a
 q=e.$1(n!=null&&J.js(n)?o.a:o.d)
@@ -39431,7 +39433,7 @@ s=1
 break
 case 1:return A.C(q,r)}})
 return A.D($async$pd,r)},
-a1X(){var s=this.c.nq$
+a1X(){var s=this.d.nq$
 s.H(s,new A.Fo(new A.Sm(),new A.Sn(this),new A.So(this),null,null,null))}}
 A.Sm.prototype={
 $2(a,b){return this.P6(a,b)},

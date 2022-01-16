@@ -18,7 +18,10 @@ GetIt it = GetIt.instance;
 Future<void> registerServices() async{
 
   // final apiClient = ApiClient(basePath: "http://51.77.137.143:8080"); // apk
-  final apiClient = ApiClient(basePath: "https://bingo-pr-spc.online/api"); // web
+  final apiClient = ApiClient(
+    basePath: "https://bingo-pr-spc.online/api",
+    socketPath: "http://51.77.137.143:8080",
+  ); // web
   final Object cacheClient;
 
   if(kIsWeb){
